@@ -166,43 +166,43 @@ sidebar_accordion <- accordion(
     accordion_panel(
         "Production Function",
         icon = fa("hammer"),
-        sliderInput("alpha", "α (capital share)", value = 0.3, min = 0, max = 1, step = 0.1),
-        sliderInput("beta", "β (land share)", value = 0.3, min = 0, max = 1, step = 0.1),
-        sliderInput("gamma", "γ (TFP returns to scale)", value = 1, min = 0, max = 1, step = 0.1)
+        sliderInput("alpha", withMathJax("\\(\\alpha\\) (capital share)"), value = 0.3, min = 0, max = 1, step = 0.1),
+        sliderInput("beta", withMathJax("\\(\\beta\\) (land share)"), value = 0.3, min = 0, max = 1, step = 0.1),
+        sliderInput("gamma", withMathJax("\\(\\gamma\\) (TFP returns to scale)"), value = 1, min = 0, max = 1, step = 0.1)
     ),
     accordion_panel(
         "Capital Dynamics",
         icon = fa("industry"),
-        sliderInput("delta", "δ (depreciation rate)", value = 0.1, min = 0, max = 1, step = 0.1),
-        sliderInput("s", "s (savings rate)", value = 0.3, min = 0, max = 1, step = 0.1)
+        sliderInput("delta", withMathJax("\\(\\delta\\) (depreciation rate)"), value = 0.1, min = 0, max = 1, step = 0.1),
+        sliderInput("s", withMathJax("\\(s\\) (savings rate)"), value = 0.3, min = 0, max = 1, step = 0.1)
     ),
     accordion_panel(
         "Population Dynamics",
         icon = fa("baby-carriage"),
-        sliderInput("b0", "b₀ (birth rate)", value = 0, min = 0, max = 1, step = 0.1),
-        sliderInput("d0", "d₀ (death rate intercept)", value = 0, min = 0, max = 1, step = 0.1),
-        sliderInput("d1", "d₁ (death rate slope w.r.t y)", value = 0, min = 0, max = 1, step = 0.1)
+        sliderInput("b0", withMathJax("\\(b_0\\) (birth rate)"), value = 0, min = 0, max = 1, step = 0.1),
+        sliderInput("d0", withMathJax("\\(d_0\\) (death rate intercept)"), value = 0, min = 0, max = 1, step = 0.1),
+        sliderInput("d1", withMathJax("\\(d_1\\) (death rate slope w.r.t. \\(y\\))"), value = 0, min = 0, max = 1, step = 0.1)
     ),
     accordion_panel(
         "TFP Dynamics",
         icon = fa("flask"),
-        sliderInput("z", "z (research productivity)", value = 0, min = 0, max = 10, step = 1),
-        sliderInput("phi", "φ (research returns to scale)", value = 0, min = 0, max = 1, step = 0.1),
-        sliderInput("theta", "θ (research automation)", value = 0, min = 0, max = 1, step = 0.1),
-        sliderInput("a", "a (researcher share)", value = 0, min = 0, max = 1, step = 0.1)
+        sliderInput("z", withMathJax("\\(z\\) (research productivity)"), value = 0, min = 0, max = 10, step = 1),
+        sliderInput("phi", withMathJax("\\(\\phi\\) (research returns to scale)"), value = 0, min = 0, max = 1, step = 0.1),
+        sliderInput("theta", withMathJax("\\(\\theta\\) (research automation)"), value = 0, min = 0, max = 1, step = 0.1),
+        sliderInput("a", withMathJax("\\(a\\) (researcher share)"), value = 0, min = 0, max = 1, step = 0.1)
     ),
     accordion_panel(
         "Initial Values",
         icon = fa("rocket"),
-        sliderInput("K_1", "K₁ (initial capital)", value = 1, min = 1, max = 10, step = 1),
-        sliderInput("L_1", "L₁ (initial labor)", value = 1, min = 1, max = 10, step = 1),
-        sliderInput("A_1", "A₁ (initial TFP)", value = 1, min = 1, max = 10, step = 1),
-        sliderInput("X", "X (permanent land)", value = 1, min = 1, max = 10, step = 1)
+        sliderInput("K_1", withMathJax("\\(K_1\\) (initial capital)"), value = 1, min = 1, max = 10, step = 1),
+        sliderInput("L_1", withMathJax("\\(L_1\\) (initial labor)"), value = 1, min = 1, max = 10, step = 1),
+        sliderInput("A_1", withMathJax("\\(A_1\\) (initial TFP)"), value = 1, min = 1, max = 10, step = 1),
+        sliderInput("X", withMathJax("\\(X\\) (permanent land)"), value = 1, min = 1, max = 10, step = 1)
     ),
     accordion_panel(
         "Simulation Settings",
         icon = fa("gamepad"),
-        sliderInput("T", "T (number of periods)", value = 200, min = 50, max = 500, step = 50)
+        sliderInput("T", withMathJax("\\(T\\) (number of periods)"), value = 200, min = 50, max = 500, step = 50)
     )
 )
 

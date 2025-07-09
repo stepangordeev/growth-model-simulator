@@ -1,5 +1,5 @@
-# run for shinylive to export the app as a site to root dir
-shinylive::export(appdir = "app", destdir = "shinylive_output/")
+# run for shinylive to export the app as a site
+shinylive::export(appdir = "app", destdir = "docs/")
 
 # test
-httpuv::runStaticServer("shinylive_output/")
+httpuv::runStaticServer("docs/")
