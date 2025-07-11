@@ -20,6 +20,7 @@ use([
   LegendComponent,
   GridComponent
 ]);
+import ParameterSlider from './ParameterSlider.vue'
 
 const L_1 = ref(1);
 const K_1 = ref(1);
@@ -37,7 +38,8 @@ const z = ref(0);
 const s = ref(0.3);
 const a = ref(0);
 const X = ref(1);
-const T = ref(50);
+const T = ref(100);
+
 
 // creates marks for naive ui's slider: marks at step intervals, with labels only at min and max, plus current value
 function createLabeledMarks(min, max, step, currentValue = null) {
@@ -326,32 +328,18 @@ function makeEchartsOption(yVar, yLabel = null) {
 
       <n-divider>Parameters</n-divider>
       <n-collapse>
+
         <n-collapse-item title="Production Function">
-          <n-slider
-            v-model:value="alpha" :marks="createLabeledMarks(0, 1, 0.1, alpha)" max="1"
-            step="mark" :tooltip="false"
-          >
-            <template #thumb>
-              <n-icon-wrapper :size="24" :border-radius="12">
-                <vue-latex :expression="'\\alpha'" display-mode />
-              </n-icon-wrapper>
-            </template>
-          </n-slider>
+          <ParameterSlider v-model="alpha" :min="0" :max="1" :step="0.1" latex-expression="\alpha" />
         </n-collapse-item>
+        
         <n-collapse-item title="Capital Dynamics">
         </n-collapse-item>
+
         <n-collapse-item title="Simulation Settings">
-          <n-slider
-            v-model:value="T" :marks="createLabeledMarks(50, 500, 50, T)" max="500"
-            step="mark" :tooltip="false"
-          >
-            <template #thumb>
-              <n-icon-wrapper :size="24" :border-radius="12">
-                <vue-latex :expression="'T'" display-mode />
-              </n-icon-wrapper>
-            </template>
-          </n-slider>
+          <ParameterSlider v-model="T" :min="50" :max="500" :step="50" latex-expression="T" />
         </n-collapse-item>
+
       </n-collapse>
     </n-layout-sider>
     <n-tabs type="line" animated>
