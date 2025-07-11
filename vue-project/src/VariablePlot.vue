@@ -22,6 +22,68 @@ const props = defineProps({
   }
 })
 
+// Color mapping for different variable groups
+const getVariableColor = (variable) => {
+  // Define colors for each variable group
+  const colors = {
+    output: '#1f77b4',      // Blue theme
+    capital: '#ff7f0e',     // Orange theme
+    consumption: '#2ca02c',  // Green theme
+    labor: '#d62728',       // Red theme
+    technology: '#9467bd',  // Purple theme
+    land: '#8c564b',        // Brown theme
+    investment: '#e377c2',  // Pink theme
+    default: '#17becf'      // Cyan theme
+  };
+  
+  // Map variables to their respective color groups
+  const variableGroups = {
+    // Output variables
+    'Y': colors.output,
+    'y': colors.output,
+    'g_Y': colors.output,
+    'g_y': colors.output,
+    
+    // Capital variables
+    'K': colors.capital,
+    'k': colors.capital,
+    'g_K': colors.capital,
+    'g_k': colors.capital,
+    
+    // Consumption variables
+    'C': colors.consumption,
+    'c': colors.consumption,
+    'g_C': colors.consumption,
+    'g_c': colors.consumption,
+    
+    // Labor variables
+    'L': colors.labor,
+    'l': colors.labor,
+    'g_L': colors.labor,
+    'g_l': colors.labor,
+    
+    // Technology/TFP variables
+    'A': colors.technology,
+    'a': colors.technology,
+    'g_A': colors.technology,
+    'g_a': colors.technology,
+    
+    // Land variables
+    'X': colors.land,
+    'x': colors.land,
+    'g_X': colors.land,
+    'g_x': colors.land,
+    
+    // Investment variables
+    'I': colors.investment,
+    'i': colors.investment,
+    'g_I': colors.investment,
+    'g_i': colors.investment
+  };
+  
+  return variableGroups[variable] || colors.default;
+};
+
 const x_axis_interval = (index, value) => {
   if (index === 0) return true; // Show period 1
   // For remaining periods, show labels at nice intervals
@@ -65,9 +127,15 @@ function makeEchartsOption(yVar, yLabel = null) {
       {
         data: props.dataTable.map(item => item[yVar]),
         type: 'line',
-        // smooth: true,
         name: yLabel || yVar,
-        showSymbol: false
+        showSymbol: false,
+        lineStyle: {
+          width: 3,
+          color: getVariableColor(yVar)
+        },
+        itemStyle: {
+          color: getVariableColor(yVar)
+        }
       }
     ],
     tooltip: {
