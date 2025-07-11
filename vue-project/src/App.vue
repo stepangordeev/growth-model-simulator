@@ -3,9 +3,13 @@ import { VisXYContainer, VisLine, VisAxis, VisTooltip, VisCrosshair} from '@unov
 import { defineComponent, ref, computed } from "vue";
 import { VueDataUi } from 'vue-data-ui';
 import "vue-data-ui/style.css";
+import { Line } from 'vue-chartjs';
+import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, PointElement, LineElement } from 'chart.js'
+ChartJS.register(Title, Tooltip, Legend, BarElement, PointElement, LineElement, CategoryScale, LinearScale)
 
 const value = ref(0);
 const alpha = ref(0.3);
+const T = ref(10);
 // marks from 0 to 1 in 0.1 increments
 const marks = Object.fromEntries(
   Array.from({ length: 11 }, (_, i) => {
@@ -113,17 +117,169 @@ const columns = [
     }
   ]
 
-const data_table = [
-  { t: 1, Y: 0, K: 0 },
-  { t: 2, Y: 1, K: 1 },
-  { t: 3, Y: 2, K: 2 },
-  { t: 4, Y: 3, K: 3 },
-  { t: 5, Y: 5, K: 5 },
-  { t: 6, Y: 8, K: 8 },
-  { t: 7, Y: 13, K: 13 },
-  { t: 8, Y: 21, K: 21 },
-  { t: 9, Y: 34, K: 34 }
-];
+const Y = (A, K, X, L, gamma, alpha, beta) => {
+  return Math.pow(A, gamma) * Math.pow(K, alpha) * Math.pow(X, beta) * Math.pow(L, 1 - alpha - beta);
+};
+
+const I_y = (Y, s) => {
+  return s * Y;
+};
+
+const I_a = (A, K, L_a, z, phi, theta) => {
+  return z * Math.pow(A, phi) * Math.pow(K, theta) * Math.pow(L_a, 1 - theta);
+};
+
+const A_lom = (A, I_a) => {
+  return A + I_a;
+};
+
+const L_lom = (L_prev, b0, d0, d1, y) => {
+  return L_prev * (1 + b0 - d0 + d1 * y);
+};
+
+const K_lom = (K, I_y, delta) => {
+  return K * (1 - delta) + I_y;
+};
+
+// Simulation function converted from R
+const simulate = (
+  L_1 = 1,
+  K_1 = 1,
+  A_1 = 1,
+  alpha = 0,
+  beta = 0,
+  gamma = 1,
+  delta = 0,
+  phi = 0,
+  theta = 0,
+  b0 = 0,
+  d0 = 0,
+  d1 = 0,
+  z = 0,
+  s = 0,
+  a = 0, // researcher share
+  X = 1,
+  T = 20
+) => {
+  // Initialize arrays for all variables
+  const period = Array.from({ length: T }, (_, i) => i + 1);
+  const Y_arr = new Array(T);
+  const A_arr = new Array(T);
+  const K_arr = new Array(T);
+  const L_arr = new Array(T);
+  const I_y_arr = new Array(T);
+  const I_a_arr = new Array(T);
+  const C_arr = new Array(T);
+  const y_arr = new Array(T);
+  const k_arr = new Array(T);
+  const x_arr = new Array(T);
+  const c_arr = new Array(T);
+  const g_Y = new Array(T);
+  const g_y = new Array(T);
+  const g_A = new Array(T);
+  const g_K = new Array(T);
+  const g_k = new Array(T);
+  const g_L = new Array(T);
+  const g_C = new Array(T);
+  const g_c = new Array(T);
+
+  // Initialize first period
+  L_arr[0] = L_1;
+  K_arr[0] = K_1;
+  A_arr[0] = A_1;
+  Y_arr[0] = Y(A_arr[0], K_arr[0], X, L_arr[0] * (1 - a), gamma, alpha, beta);
+  I_y_arr[0] = I_y(Y_arr[0], s);
+  I_a_arr[0] = I_a(A_arr[0], K_arr[0], L_arr[0] * a, z, phi, theta);
+  C_arr[0] = Y_arr[0] - I_y_arr[0];
+  y_arr[0] = Y_arr[0] / L_arr[0];
+  k_arr[0] = K_arr[0] / L_arr[0];
+  x_arr[0] = X / L_arr[0];
+  c_arr[0] = C_arr[0] / L_arr[0];
+
+  // Simulate forward
+  for (let t = 0; t < T - 1; t++) {
+    A_arr[t + 1] = A_lom(A_arr[t], I_a_arr[t]);
+    L_arr[t + 1] = L_lom(L_arr[t], b0, d0, d1, y_arr[t]);
+    K_arr[t + 1] = K_lom(K_arr[t], I_y_arr[t], delta);
+    Y_arr[t + 1] = Y(A_arr[t + 1], K_arr[t + 1], X, L_arr[t + 1] * (1 - a), gamma, alpha, beta);
+    I_y_arr[t + 1] = I_y(Y_arr[t + 1], s);
+    I_a_arr[t + 1] = I_a(A_arr[t + 1], K_arr[t + 1], L_arr[t + 1] * a, z, phi, theta);
+    C_arr[t + 1] = Y_arr[t + 1] - I_y_arr[t + 1];
+    c_arr[t + 1] = C_arr[t + 1] / L_arr[t + 1];
+    y_arr[t + 1] = Y_arr[t + 1] / L_arr[t + 1];
+    k_arr[t + 1] = K_arr[t + 1] / L_arr[t + 1];
+    x_arr[t + 1] = X / L_arr[t + 1];
+    
+    // Growth rates (undefined for first period)
+    g_Y[t + 1] = (Y_arr[t + 1] - Y_arr[t]) / Y_arr[t];
+    g_A[t + 1] = (A_arr[t + 1] - A_arr[t]) / A_arr[t];
+    g_K[t + 1] = (K_arr[t + 1] - K_arr[t]) / K_arr[t];
+    g_L[t + 1] = (L_arr[t + 1] - L_arr[t]) / L_arr[t];
+    g_y[t + 1] = (y_arr[t + 1] - y_arr[t]) / y_arr[t];
+    g_k[t + 1] = (k_arr[t + 1] - k_arr[t]) / k_arr[t];
+    g_C[t + 1] = (C_arr[t + 1] - C_arr[t]) / C_arr[t];
+    g_c[t + 1] = (c_arr[t + 1] - c_arr[t]) / c_arr[t];
+  }
+
+  // Return data in the same format as your data_table
+  return Array.from({ length: T }, (_, i) => ({
+    t: period[i],
+    Y: Y_arr[i],
+    A: A_arr[i],
+    K: K_arr[i],
+    L: L_arr[i],
+    I_y: I_y_arr[i],
+    I_a: I_a_arr[i],
+    C: C_arr[i],
+    y: y_arr[i],
+    k: k_arr[i],
+    x: x_arr[i],
+    c: c_arr[i],
+    g_Y: g_Y[i],
+    g_y: g_y[i],
+    g_A: g_A[i],
+    g_K: g_K[i],
+    g_k: g_k[i],
+    g_L: g_L[i],
+    g_C: g_C[i],
+    g_c: g_c[i]
+  }));
+};
+
+// data table for Naive UI Data Table - now using the simulation
+const data_table = computed(() => simulate(
+  1, // L_1
+  1, // K_1  
+  1, // A_1
+  alpha.value, // alpha
+  0, // beta
+  1, // gamma
+  0, // delta
+  0, // phi
+  0, // theta
+  0, // b0
+  0, // d0
+  0, // d1
+  0, // z
+  0, // s
+  0, // a (researcher share)
+  1, // X
+  T.value // T
+));
+
+// convert data_table to chart.js format
+const Y_chart_data = computed(() => ({
+  labels: data_table.value.map(item => item.t),
+  datasets: [
+    {
+      label: 'Output (Y)',
+      data: data_table.value.map(item => item.Y),
+      borderColor: 'rgb(75, 192, 192)',
+      backgroundColor: 'rgba(75, 192, 192, 0.2)',
+      tension: 0.1
+    }
+  ]
+}));
 
 // export default defineComponent({
 //   setup() {
@@ -175,13 +331,25 @@ const data_table = [
             component="VueUiXy"
             :dataset="dataset"
       /> -->
-    <n-data-table
-      :columns="columns"
-      :data="data_table"
-      :bordered="false"
-    />
+    <n-card title = "data table">
+      <n-data-table
+        :columns="columns"
+        :data="data_table"
+        :bordered="false"
+      />
+    </n-card>
+    <n-card title = "Y" class="plot-card">
+      <Line
+        id="Y-plot"
+        :data="Y_chart_data"
+      />
+    </n-card>
+
   </n-layout>
 </template>
 
 <style scoped>
+.plot-card {
+  max-width: 600px;
+}
 </style>
