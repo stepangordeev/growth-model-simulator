@@ -3,6 +3,7 @@ import { defineComponent, ref, computed } from "vue";
 import { Line } from 'vue-chartjs';
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, PointElement, LineElement } from 'chart.js'
 ChartJS.register(Title, Tooltip, Legend, BarElement, PointElement, LineElement, CategoryScale, LinearScale)
+import { VueLatex } from 'vatex'
 
 const L_1 = ref(1);
 const K_1 = ref(1);
@@ -225,7 +226,13 @@ const Y_chart_data = computed(() => ({
   ]
 }));
 
-
+const chart_js_options = {
+        plugins: {
+            legend: {
+                display: false
+            }
+        }
+    }
 </script>
 
 <template>
@@ -238,11 +245,11 @@ const Y_chart_data = computed(() => ({
         <n-collapse-item title="Production Function">
           <n-slider
             v-model:value="alpha" :marks="createLabeledMarks(0, 1, 0.1)" max="1"
-            step="mark" show-tooltip="true"
+            step="mark" show-tooltip="true" placement="bottom"
           >
             <template #thumb>
               <n-icon-wrapper :size="24" :border-radius="12">
-                a
+                <vue-latex :expression="'\\alpha'" display-mode />
               </n-icon-wrapper>
             </template>
           </n-slider>
@@ -257,6 +264,7 @@ const Y_chart_data = computed(() => ({
           <Line
             id="Y-plot"
             :data="Y_chart_data"
+            :options="chart_js_options"
           />
         </n-card>
       </n-tab-pane>
