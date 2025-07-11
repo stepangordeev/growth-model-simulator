@@ -1,46 +1,27 @@
 <script setup>
-import { VisXYContainer, VisLine, VisAxis, VisTooltip, VisCrosshair} from '@unovis/vue'
 import { defineComponent, ref, computed } from "vue";
-import { VueDataUi } from 'vue-data-ui';
-import "vue-data-ui/style.css";
 import { Line } from 'vue-chartjs';
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, PointElement, LineElement } from 'chart.js'
 ChartJS.register(Title, Tooltip, Legend, BarElement, PointElement, LineElement, CategoryScale, LinearScale)
 
-const value = ref(0);
+const L_1 = ref(1);
+const K_1 = ref(1);
+const A_1 = ref(1);
 const alpha = ref(0.3);
+const beta = ref(0);
+const gamma = ref(1);
+const delta = ref(0.1);
+const phi = ref(0);
+const theta = ref(0);
+const b0 = ref(0);
+const d0 = ref(0);
+const d1 = ref(0);
+const z = ref(0);
+const s = ref(0.3);
+const a = ref(0);
+const X = ref(1);
 const T = ref(10);
-// marks from 0 to 1 in 0.1 increments
-const marks = Object.fromEntries(
-  Array.from({ length: 11 }, (_, i) => {
-    const val = (i / 10).toFixed(1);
-    return [parseFloat(val), val];
-  })
-);
-// marks without labels
-const marks_unlabeled = Object.fromEntries(
-  Array.from({ length: 11 }, (_, i) => {
-    const val = (i / 10).toFixed(1);
-    return [parseFloat(val), ''];
-  })
-);
-// marks with labels only for 0 and 1
-const marks_labeled = Object.fromEntries(
-  Array.from({ length: 11 }, (_, i) => {
-    const val = (i / 10).toFixed(1);
-    // if 0: label is "0", if 1: label is "1", otherwise no label
-    let label;
-    if (i === 0){
-      label = "0";     
-    } else if (i === 10) {
-      label = "1";
-    } else {
-      label = "";
-    }
 
-    return [parseFloat(val), label];
-  })
-);
 // creates marks for naive ui's slider: marks at step intervals, with labels only at min and max
 function createLabeledMarks(min, max, step) {
   const count = Math.round((max - min) / step);
@@ -64,45 +45,8 @@ function createLabeledMarks(min, max, step) {
 const marks_labeled2 = createLabeledMarks(0, 100, 0.1);
 
 
-const data = computed(() =>
-  Array.from({ length: 10 }, (_, i) => {
-    const t = i + 1;
-    return { t, y: Math.pow(t, alpha.value) };
-  })
-);
 
-const triggers = {
-  // [Line.selectors.line]: () => 'Average value'
-}
-const crosshair_tooltip_template = (d, x) => {
-  return `<div>
-    <strong>t:</strong> ${d.t.toFixed(0)}<br/>
-    <strong>y:</strong> ${d.y.toFixed(3)}
-  </div>`;
-};
-
-const dataset = ref([
-  {
-    "name": "Y",
-    "series": [
-      0,
-      1,
-      2,
-      3,
-      5,
-      8,
-      13,
-      21,
-      34,
-      55,
-      89,
-      144
-    ],
-    "type": "line"
-  }
-])
-
-const columns = [
+const data_table_columns = [
     {
       title: "Period",
       key: "t"
@@ -248,22 +192,22 @@ const simulate = (
 
 // data table for Naive UI Data Table - now using the simulation
 const data_table = computed(() => simulate(
-  1, // L_1
-  1, // K_1  
-  1, // A_1
+  L_1.value, // L_1
+  K_1.value, // K_1
+  A_1.value, // A_1
   alpha.value, // alpha
-  0, // beta
-  1, // gamma
-  0, // delta
-  0, // phi
-  0, // theta
-  0, // b0
-  0, // d0
-  0, // d1
-  0, // z
-  0, // s
-  0, // a (researcher share)
-  1, // X
+  beta.value, // beta
+  gamma.value, // gamma
+  delta.value, // delta
+  phi.value, // phi
+  theta.value, // theta
+  b0.value, // b0
+  d0.value, // d0
+  d1.value, // d1
+  z.value, // z
+  s.value, // s
+  a.value, // a (researcher share)
+  X.value, // X
   T.value // T
 ));
 
@@ -320,20 +264,9 @@ const Y_chart_data = computed(() => ({
       </n-collapse-item>
       </n-collapse>
     </n-layout-sider>
-      <!-- <VisXYContainer :data="data" :yDomainMinConstraint="[undefined, 0]" >
-        <VisLine :x="d => d.t" :y="d => d.y" />
-        <VisAxis type="x" label="Period"/>
-        <VisAxis type="y" />
-        <VisTooltip/>
-        <VisCrosshair :template="crosshair_tooltip_template"/>
-      </VisXYContainer> -->
-      <!-- <VueDataUi
-            component="VueUiXy"
-            :dataset="dataset"
-      /> -->
     <n-card title = "data table">
       <n-data-table
-        :columns="columns"
+        :columns="data_table_columns"
         :data="data_table"
         :bordered="false"
       />
