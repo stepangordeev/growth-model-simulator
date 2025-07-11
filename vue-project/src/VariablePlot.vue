@@ -67,7 +67,7 @@ function makeEchartsOption(yVar, yLabel = null) {
     ],
     tooltip: {
       trigger: 'axis',
-      valueFormatter: (value) => value.toFixed(3)
+      valueFormatter: (value) => value !== undefined ? value.toFixed(3) : '-' // Format values to 3 decimal places, or show '-' if undefined (e.g. growth rates at first period)
     },
     grid: { // padding
       left: '10%',

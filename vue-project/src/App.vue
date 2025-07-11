@@ -22,6 +22,11 @@ use([
 ]);
 import ParameterSlider from './ParameterSlider.vue'
 import VariablePlot from './VariablePlot.vue'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faHammer, faIndustry, faBabyCarriage, faFlask, faRocket, faGamepad } from '@fortawesome/free-solid-svg-icons'
+/* add icons to the library */
+library.add(faHammer, faIndustry, faBabyCarriage, faFlask, faRocket, faGamepad)
 
 const L_1 = ref(1);
 const K_1 = ref(1);
@@ -92,20 +97,30 @@ function createLabeledMarks(min, max, step, currentValue = null) {
   return marks;
 }
 
-const data_table_columns = [
-    {
-      title: "Period",
-      key: "t"
-    },
-    {
-      title: "Y",
-      key: "Y"
-    },
-    {
-      title: "K",
-      key: "K"
+const data_table_columns = computed(() => {
+  if (data_table.value.length === 0) return [];
+  
+  // Get all keys from the first row to create columns dynamically
+  const keys = Object.keys(data_table.value[0]);
+  
+  return keys.map(key => ({
+    title: key,
+    key: key,
+    fixed: key === 't' ? 'left' : undefined,
+    render: (row) => {
+      const value = row[key];
+      if (typeof value === 'number') {
+        // If it's an integer or close to an integer, show without decimals
+        if (Number.isInteger(value) || Math.abs(value - Math.round(value)) < 0.001) {
+          return Math.round(value).toString();
+        }
+        // Otherwise, round to 3 decimal places
+        return value.toFixed(3);
+      }
+      return value;
     }
-  ]
+  }));
+});
 
 const Y = (A, K, X, L, gamma, alpha, beta) => {
   return Math.pow(A, gamma) * Math.pow(K, alpha) * Math.pow(X, beta) * Math.pow(L, 1 - alpha - beta);
@@ -283,23 +298,35 @@ const x_axis_interval = (index, value) => {
       <n-collapse>
 
         <n-collapse-item title="Production Function">
+          <template #header-extra>
+            <FontAwesomeIcon icon="hammer" />
+          </template>
           <ParameterSlider v-model="alpha" :min="0" :max="1" :step="0.1" latex-expression="\alpha" title="capital share" />
           <ParameterSlider v-model="beta" :min="0" :max="1" :step="0.1" latex-expression="\beta" title="land share" />
           <ParameterSlider v-model="gamma" :min="0" :max="1" :step="0.1" latex-expression="\gamma" title="TFP returns to scale" />
         </n-collapse-item>
         
         <n-collapse-item title="Capital Dynamics">
+          <template #header-extra>
+            <FontAwesomeIcon icon="industry" />
+          </template>
           <ParameterSlider v-model="delta" :min="0" :max="1" :step="0.1" latex-expression="\delta" title="depreciation rate" />
           <ParameterSlider v-model="s" :min="0" :max="1" :step="0.1" latex-expression="s" title="savings rate" />
         </n-collapse-item>
         
         <n-collapse-item title="Population Dynamics">
+          <template #header-extra>
+            <FontAwesomeIcon icon="baby-carriage" />
+          </template>
           <ParameterSlider v-model="b0" :min="0" :max="1" :step="0.1" latex-expression="b_0" title="birth rate" />
           <ParameterSlider v-model="d0" :min="0" :max="1" :step="0.1" latex-expression="d_0" title="death rate intercept" />
           <ParameterSlider v-model="d1" :min="0" :max="1" :step="0.1" latex-expression="d_1" title="death rate decline with income" />
         </n-collapse-item>
         
         <n-collapse-item title="Research Dynamics">
+          <template #header-extra>
+            <FontAwesomeIcon icon="flask" />
+          </template>
           <ParameterSlider v-model="z" :min="0" :max="10" :step="1" latex-expression="z" title="research productivity" />
           <ParameterSlider v-model="phi" :min="0" :max="1" :step="0.1" latex-expression="\phi" title="research returns to scale" />
           <ParameterSlider v-model="theta" :min="0" :max="1" :step="0.1" latex-expression="\theta" title="research automation" />
@@ -307,6 +334,9 @@ const x_axis_interval = (index, value) => {
         </n-collapse-item>
         
         <n-collapse-item title="Initial Values">
+          <template #header-extra>
+            <FontAwesomeIcon icon="rocket" />
+          </template>
           <ParameterSlider v-model="K_1" :min="1" :max="10" :step="1" latex-expression="K_1" title="initial capital" />
           <ParameterSlider v-model="L_1" :min="1" :max="10" :step="1" latex-expression="L_1" title="initial population" />
           <ParameterSlider v-model="A_1" :min="1" :max="10" :step="1" latex-expression="A_1" title="initial TFP" />
@@ -314,6 +344,9 @@ const x_axis_interval = (index, value) => {
         </n-collapse-item>
 
         <n-collapse-item title="Simulation Settings">
+          <template #header-extra>
+            <FontAwesomeIcon icon="gamepad" />
+          </template>
           <ParameterSlider v-model="T" :min="50" :max="500" :step="50" latex-expression="T" title="time periods" />
         </n-collapse-item>
 
@@ -322,29 +355,45 @@ const x_axis_interval = (index, value) => {
     <n-tabs type="line" animated>
       <n-tab-pane name="aggregates" tab="Aggregates">
         <n-flex>
-          <VariablePlot variable="Y" label="Output (Y)" latex-expression="Y" :data-table="data_table" />
-          <VariablePlot variable="K" label="Capital (K)" latex-expression="K" :data-table="data_table" />
+          <VariablePlot variable="Y" label="Output" latex-expression="Y" :data-table="data_table" />
+          <VariablePlot variable="A" label="TFP" latex-expression="A" :data-table="data_table" />
+          <VariablePlot variable="K" label="Capital" latex-expression="K" :data-table="data_table" />
+          <VariablePlot variable="L" label="Labor" latex-expression="L" :data-table="data_table" />
+          <VariablePlot variable="C" label="Consumption" latex-expression="C" :data-table="data_table" />
         </n-flex>
       </n-tab-pane>
       <n-tab-pane name="per_capita" tab="Per Capita">
-        
+        <n-flex>
+          <VariablePlot variable="y" label="Output per Capita" latex-expression="y" :data-table="data_table" />
+          <VariablePlot variable="k" label="Capital per Capita" latex-expression="k" :data-table="data_table" />
+          <VariablePlot variable="x" label="Land per Capita" latex-expression="x" :data-table="data_table" />
+          <VariablePlot variable="c" label="Consumption per Capita" latex-expression="c" :data-table="data_table" />
+        </n-flex>
       </n-tab-pane>
       <n-tab-pane name="growth_aggr" tab="Growth: Aggregates">
-        
+        <n-flex>
+          <VariablePlot variable="g_Y" label="Growth of Output" latex-expression="g_Y" :data-table="data_table" />
+          <VariablePlot variable="g_A" label="Growth of TFP" latex-expression="g_A" :data-table="data_table" />
+          <VariablePlot variable="g_K" label="Growth of Capital" latex-expression="g_K" :data-table="data_table" />
+          <VariablePlot variable="g_L" label="Growth of Labor" latex-expression="g_L" :data-table="data_table" />
+          <VariablePlot variable="g_C" label="Growth of Consumption" latex-expression="g_C" :data-table="data_table" />
+        </n-flex>
       </n-tab-pane>
       <n-tab-pane name="growth_per_capita" tab="Growth: Per Capita">
-        
+        <n-flex>
+          <VariablePlot variable="g_y" label="Growth of Output per Capita" latex-expression="g_y" :data-table="data_table" />
+          <VariablePlot variable="g_k" label="Growth of Capital per Capita" latex-expression="g_k" :data-table="data_table" />
+          <VariablePlot variable="g_c" label="Growth of Consumption per Capita" latex-expression="g_c" :data-table="data_table" />
+        </n-flex>
       </n-tab-pane>
       <n-tab-pane name="table" tab="Table">
-        <n-card>
-          <n-data-table
-            :columns="data_table_columns"
-            :data="data_table"
-            :bordered="false"
-            :max-height="400"
-            virtual-scroll
-          />
-        </n-card>
+        <n-data-table
+          :columns="data_table_columns"
+          :data="data_table"
+          :bordered="true"
+          max-height="calc(100vh - 150px)"
+          :scroll-x="1800"
+        />
       </n-tab-pane>
     </n-tabs>
     
@@ -352,5 +401,4 @@ const x_axis_interval = (index, value) => {
 </template>
 
 <style scoped>
-/* Styles moved to VariablePlot.vue component */
 </style>
