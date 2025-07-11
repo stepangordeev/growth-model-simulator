@@ -39,29 +39,55 @@ const a = ref(0);
 const X = ref(1);
 const T = ref(50);
 
-// creates marks for naive ui's slider: marks at step intervals, with labels only at min and max
-function createLabeledMarks(min, max, step) {
+// creates marks for naive ui's slider: marks at step intervals, with labels only at min and max, plus current value
+function createLabeledMarks(min, max, step, currentValue = null) {
   const count = Math.round((max - min) / step);
-  return Object.fromEntries(
-    Array.from({ length: count + 1 }, (_, i) => {
-      const val = +(min + i * step).toFixed(10);
-      let label;
-      if (i === 0) {
-        label = String(min);
-      } else if (i === count) {
-        label = String(max);
-      } else {
-        label = "";
-      }
-      return [val, label];
-    })
-  );
+  const marks = {};
+  
+  // Determine decimal places based on step size
+  const getDecimalPlaces = (stepSize) => {
+    if (stepSize >= 1) return 0; // Integer steps
+    const stepStr = stepSize.toString();
+    if (stepStr.includes('.')) {
+      return stepStr.split('.')[1].length;
+    }
+    return 0;
+  };
+  
+  const decimalPlaces = getDecimalPlaces(step);
+  
+  // Add marks for each step
+  for (let i = 0; i <= count; i++) {
+    const val = +(min + i * step).toFixed(10);
+    let label = "";
+    
+    // Label min and max with special handling for 0 and 1 (don't display decimal places)
+    if (i === 0) {
+      label = min === 0 ? "0" : min.toFixed(decimalPlaces);
+    } else if (i === count) {
+      label = max === 1 ? "1" : max.toFixed(decimalPlaces);
+    }
+    
+    marks[val] = label;
+  }
+  
+  // Add current value if provided and not already included
+  if (currentValue !== null && currentValue >= min && currentValue <= max) {
+    const roundedValue = +currentValue.toFixed(10);
+    // Apply same special handling of 0 and 1 for current value
+    let currentLabel;
+    if (currentValue === 0) {
+      currentLabel = "0";
+    } else if (currentValue === 1) {
+      currentLabel = "1";
+    } else {
+      currentLabel = currentValue.toFixed(decimalPlaces);
+    }
+    marks[roundedValue] = currentLabel;
+  }
+  
+  return marks;
 }
-
-// Example usage:
-const marks_labeled2 = createLabeledMarks(0, 100, 0.1);
-
-
 
 const data_table_columns = [
     {
@@ -302,8 +328,8 @@ function makeEchartsOption(yVar, yLabel = null) {
       <n-collapse>
         <n-collapse-item title="Production Function">
           <n-slider
-            v-model:value="alpha" :marks="createLabeledMarks(0, 1, 0.1)" max="1"
-            step="mark" show-tooltip="true" placement="bottom"
+            v-model:value="alpha" :marks="createLabeledMarks(0, 1, 0.1, alpha)" max="1"
+            step="mark" :tooltip="false"
           >
             <template #thumb>
               <n-icon-wrapper :size="24" :border-radius="12">
@@ -316,8 +342,8 @@ function makeEchartsOption(yVar, yLabel = null) {
         </n-collapse-item>
         <n-collapse-item title="Simulation Settings">
           <n-slider
-            v-model:value="T" :marks="createLabeledMarks(50, 500, 50)" max="500"
-            step="mark" show-tooltip="true" placement="bottom"
+            v-model:value="T" :marks="createLabeledMarks(50, 500, 50, T)" max="500"
+            step="mark" :tooltip="false"
           >
             <template #thumb>
               <n-icon-wrapper :size="24" :border-radius="12">
