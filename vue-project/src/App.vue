@@ -60,17 +60,29 @@ const marks_labeled2 = createLabeledMarks(0, 100, 0.1);
 </script>
 
 <template>
-  aaa
-  <n-slider
-    v-model:value="alpha" :marks="createLabeledMarks(0, 1, 0.1)" max="1"
-    step="mark" show-tooltip="true"
-  >
-    <template #thumb>
-      <n-icon-wrapper :size="24" :border-radius="12">
-        a
-      </n-icon-wrapper>
-    </template>
-  </n-slider>
+  <n-layout has-sider>
+    <n-layout-sider content-style="padding: 24px;">
+
+      <n-divider>Parameters</n-divider>
+      <n-collapse>
+        <n-collapse-item title="Production Function">
+          <n-slider
+            v-model:value="alpha" :marks="createLabeledMarks(0, 1, 0.1)" max="1"
+            step="mark" show-tooltip="true"
+          >
+            <template #thumb>
+              <n-icon-wrapper :size="24" :border-radius="12">
+                a
+              </n-icon-wrapper>
+            </template>
+          </n-slider>
+        </n-collapse-item>
+      <n-collapse-item title="Capital Dynamics">
+      </n-collapse-item>
+      </n-collapse>
+    </n-layout-sider>
+    aaa
+  </n-layout>
 </template>
 
 <style scoped>
