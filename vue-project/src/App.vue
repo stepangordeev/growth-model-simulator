@@ -228,13 +228,33 @@ const data_table = computed(() => simulate(
   T.value // T
 ));
 
+const x_axis_interval = (index, value) => {
+  if (index === 0) return true; // Show period 1
+  // For remaining periods, show labels at nice intervals
+  const totalPeriods = data_table.value.length;
+  if (totalPeriods > 200) {
+    return (index + 1) % 50 === 0; 
+  } else if (totalPeriods >= 150) {
+    return (index + 1) % 25 === 0;
+  } else {
+    return (index + 1) % 10 === 0; 
+  }
+};
 
 function makeEchartsOption(yVar, yLabel = null) {
   return {
     xAxis: {
       type: 'category',
       data: data_table.value.map(item => item.t),
-      name: 'Period'
+      name: 'Period',
+      boundaryGap: true,
+      axisLabel: {
+        interval: x_axis_interval,
+      },
+      axisTick: {
+        interval: x_axis_interval,
+        alignWithLabel: true
+      }
     },
     yAxis: {
       type: 'value',
@@ -289,8 +309,20 @@ function makeEchartsOption(yVar, yLabel = null) {
             </template>
           </n-slider>
         </n-collapse-item>
-      <n-collapse-item title="Capital Dynamics">
-      </n-collapse-item>
+        <n-collapse-item title="Capital Dynamics">
+        </n-collapse-item>
+        <n-collapse-item title="Simulation Settings">
+          <n-slider
+            v-model:value="T" :marks="createLabeledMarks(50, 500, 50)" max="500"
+            step="mark" show-tooltip="true" placement="bottom"
+          >
+            <template #thumb>
+              <n-icon-wrapper :size="24" :border-radius="12">
+                <vue-latex :expression="'T'" display-mode />
+              </n-icon-wrapper>
+            </template>
+          </n-slider>
+        </n-collapse-item>
       </n-collapse>
     </n-layout-sider>
     <n-tabs type="line" animated>
