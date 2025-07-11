@@ -20,7 +20,7 @@ const z = ref(0);
 const s = ref(0.3);
 const a = ref(0);
 const X = ref(1);
-const T = ref(10);
+const T = ref(20);
 
 // creates marks for naive ui's slider: marks at step intervals, with labels only at min and max
 function createLabeledMarks(min, max, step) {
@@ -225,25 +225,12 @@ const Y_chart_data = computed(() => ({
   ]
 }));
 
-// export default defineComponent({
-//   setup() {
-//     const message = useMessage();
-//     return {
-//       data,
-//       columns: createColumns({
-//         play(row) {
-//           message.info(`Play ${row.title}`);
-//         }
-//       }),
-//       pagination: false
-//     };
-//   }
-// });
 
 </script>
 
 <template>
   <n-layout has-sider>
+
     <n-layout-sider content-style="padding: 24px;">
 
       <n-divider>Parameters</n-divider>
@@ -264,20 +251,37 @@ const Y_chart_data = computed(() => ({
       </n-collapse-item>
       </n-collapse>
     </n-layout-sider>
-    <n-card title = "data table">
-      <n-data-table
-        :columns="data_table_columns"
-        :data="data_table"
-        :bordered="false"
-      />
-    </n-card>
-    <n-card title = "Y" class="plot-card">
-      <Line
-        id="Y-plot"
-        :data="Y_chart_data"
-      />
-    </n-card>
-
+    <n-tabs type="line" animated>
+      <n-tab-pane name="aggregates" tab="Aggregates">
+        <n-card title = "Y" class="plot-card">
+          <Line
+            id="Y-plot"
+            :data="Y_chart_data"
+          />
+        </n-card>
+      </n-tab-pane>
+      <n-tab-pane name="per_capita" tab="Per Capita">
+        
+      </n-tab-pane>
+      <n-tab-pane name="growth_aggr" tab="Growth: Aggregates">
+        
+      </n-tab-pane>
+      <n-tab-pane name="growth_per_capita" tab="Growth: Per Capita">
+        
+      </n-tab-pane>
+      <n-tab-pane name="table" tab="Table">
+        <n-card>
+          <n-data-table
+            :columns="data_table_columns"
+            :data="data_table"
+            :bordered="false"
+            :max-height="400"
+            virtual-scroll
+          />
+        </n-card>
+      </n-tab-pane>
+    </n-tabs>
+    
   </n-layout>
 </template>
 
