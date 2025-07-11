@@ -1,5 +1,5 @@
 <script setup>
-import { defineComponent, ref, computed } from "vue";
+import { defineComponent, ref, computed, h } from "vue";
 import { VueLatex } from 'vatex'
 import { use } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
@@ -104,7 +104,7 @@ const data_table_columns = computed(() => {
   const keys = Object.keys(data_table.value[0]);
   
   return keys.map(key => ({
-    title: key,
+    title: () => h(VueLatex, { expression: key }),
     key: key,
     fixed: key === 't' ? 'left' : undefined,
     render: (row) => {
@@ -393,6 +393,7 @@ const x_axis_interval = (index, value) => {
           :bordered="true"
           max-height="calc(100vh - 150px)"
           :scroll-x="1800"
+          striped
         />
       </n-tab-pane>
     </n-tabs>
