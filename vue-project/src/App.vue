@@ -8,7 +8,8 @@ import {
   TitleComponent,
   TooltipComponent,
   GridComponent,
-  LegendComponent
+  LegendComponent,
+  AxisPointerComponent
 } from "echarts/components";
 import VChart, { THEME_KEY } from "vue-echarts";
 use([
@@ -18,15 +19,17 @@ use([
   TitleComponent,
   TooltipComponent,
   LegendComponent,
-  GridComponent
+  GridComponent,
+  AxisPointerComponent
 ]);
 import ParameterSlider from './ParameterSlider.vue'
 import VariablePlot from './VariablePlot.vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faHammer, faIndustry, faBabyCarriage, faFlask, faRocket, faGamepad } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome'
+import { faArrowTrendUp, faHammer, faIndustry, faBabyCarriage, faFlask, faGlobe, faPerson, faRocket, faTable, faGamepad } from '@fortawesome/free-solid-svg-icons'
+import { connect } from "echarts";
 /* add icons to the library */
-library.add(faHammer, faIndustry, faBabyCarriage, faFlask, faRocket, faGamepad)
+library.add(faArrowTrendUp, faHammer, faIndustry, faBabyCarriage, faFlask, faGlobe, faPerson, faRocket, faTable, faGamepad)
 
 const L_1 = ref(1);
 const K_1 = ref(1);
@@ -285,7 +288,8 @@ const x_axis_interval = (index, value) => {
   }
 };
 
-// Function moved to VariablePlot.vue component
+// connect all echarts plots together, so that the tooltip is synced (group = "all" needs to be set for each plot)
+connect("all")
 
 </script>
 
@@ -353,7 +357,11 @@ const x_axis_interval = (index, value) => {
       </n-collapse>
     </n-layout-sider>
     <n-tabs type="line" animated>
-      <n-tab-pane name="aggregates" tab="Aggregates">
+      <n-tab-pane name="aggregates">
+        <template #tab>
+            <FontAwesomeIcon icon="globe" />
+            &nbsp;&nbsp;<span>Aggregates</span>
+        </template>
         <n-flex>
           <VariablePlot variable="Y" label="Output" latex-expression="Y" :data-table="data_table" />
           <VariablePlot variable="A" label="TFP" latex-expression="A" :data-table="data_table" />
@@ -362,7 +370,11 @@ const x_axis_interval = (index, value) => {
           <VariablePlot variable="C" label="Consumption" latex-expression="C" :data-table="data_table" />
         </n-flex>
       </n-tab-pane>
-      <n-tab-pane name="per_capita" tab="Per Capita">
+      <n-tab-pane name="per_capita">
+        <template #tab>
+            <FontAwesomeIcon icon="person" />
+            &nbsp;&nbsp;<span>Per Capita</span>
+        </template>
         <n-flex>
           <VariablePlot variable="y" label="Output per Capita" latex-expression="y" :data-table="data_table" />
           <VariablePlot variable="k" label="Capital per Capita" latex-expression="k" :data-table="data_table" />
@@ -370,23 +382,27 @@ const x_axis_interval = (index, value) => {
           <VariablePlot variable="c" label="Consumption per Capita" latex-expression="c" :data-table="data_table" />
         </n-flex>
       </n-tab-pane>
-      <n-tab-pane name="growth_aggr" tab="Growth: Aggregates">
+      <n-tab-pane name="growth">
+        <template #tab>
+              <FontAwesomeIcon icon="arrow-trend-up" />
+            &nbsp;&nbsp;<span>Growth Rates</span>
+        </template>
         <n-flex>
           <VariablePlot variable="g_Y" label="Growth of Output" latex-expression="g_Y" :data-table="data_table" />
           <VariablePlot variable="g_A" label="Growth of TFP" latex-expression="g_A" :data-table="data_table" />
           <VariablePlot variable="g_K" label="Growth of Capital" latex-expression="g_K" :data-table="data_table" />
           <VariablePlot variable="g_L" label="Growth of Labor" latex-expression="g_L" :data-table="data_table" />
           <VariablePlot variable="g_C" label="Growth of Consumption" latex-expression="g_C" :data-table="data_table" />
-        </n-flex>
-      </n-tab-pane>
-      <n-tab-pane name="growth_per_capita" tab="Growth: Per Capita">
-        <n-flex>
           <VariablePlot variable="g_y" label="Growth of Output per Capita" latex-expression="g_y" :data-table="data_table" />
           <VariablePlot variable="g_k" label="Growth of Capital per Capita" latex-expression="g_k" :data-table="data_table" />
           <VariablePlot variable="g_c" label="Growth of Consumption per Capita" latex-expression="g_c" :data-table="data_table" />
         </n-flex>
       </n-tab-pane>
-      <n-tab-pane name="table" tab="Table">
+      <n-tab-pane name="table">
+        <template #tab>
+            <FontAwesomeIcon icon="table" />
+            &nbsp;&nbsp;<span>Table</span>
+        </template>
         <n-data-table
           :columns="data_table_columns"
           :data="data_table"

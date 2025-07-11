@@ -52,6 +52,11 @@ function makeEchartsOption(yVar, yLabel = null) {
       nameLocation: 'middle',
       nameGap: 25
     },
+    axisPointer: {
+      link: {
+        xAxisIndex: 'all'
+      },
+    },
     yAxis: {
       type: 'value',
       // name: yLabel || yVar
@@ -94,6 +99,7 @@ function makeEchartsOption(yVar, yLabel = null) {
     <v-chart
       :option="makeEchartsOption(props.variable, props.label)"
       class="echart"
+      group="all"
     />
   </n-card>
 </template>
