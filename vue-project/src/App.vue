@@ -254,7 +254,9 @@ function makeEchartsOption(yVar, yLabel = null) {
       axisTick: {
         interval: x_axis_interval,
         alignWithLabel: true
-      }
+      },
+      nameLocation: 'middle',
+      nameGap: 25
     },
     yAxis: {
       type: 'value',
@@ -273,13 +275,14 @@ function makeEchartsOption(yVar, yLabel = null) {
       trigger: 'axis',
       valueFormatter: (value) => value.toFixed(3)
     },
+    grid: { // padding
+      left: '10%',
+      right: '10%',
+      top: '2%',
+      bottom: '18%'
+    },
     // legend: {
       // data: [yLabel || yVar]
-    // },
-    // grid: {
-    //   left: '10%',
-    //   right: '10%',
-    //   bottom: '15%'
     // },
     title: {
       show: false,
@@ -327,18 +330,26 @@ function makeEchartsOption(yVar, yLabel = null) {
     </n-layout-sider>
     <n-tabs type="line" animated>
       <n-tab-pane name="aggregates" tab="Aggregates">
-        <n-card title = "Y" class="plot-card">
-          <v-chart
-            :option="makeEchartsOption('Y', 'Output (Y)')"
-            class="echart"
-          />
-        </n-card>
-        <n-card title = "K" class="plot-card">
-          <v-chart
-            :option="makeEchartsOption('K', 'Capital (K)')"
-            class="echart"
-          />
-        </n-card>
+        <n-flex>
+          <n-card class="plot-card" header-style="padding: 0;">
+            <template #header>
+              <vue-latex :expression="'Y'" display-mode />
+            </template>
+            <v-chart
+              :option="makeEchartsOption('Y', 'Output (Y)')"
+              class="echart"
+            />
+          </n-card>
+          <n-card class="plot-card" header-style="padding: 0;">
+            <template #header>
+              <vue-latex :expression="'K'" display-mode />
+            </template>
+            <v-chart
+              :option="makeEchartsOption('K', 'Capital (K)')"
+              class="echart"
+            />
+          </n-card>
+        </n-flex>
       </n-tab-pane>
       <n-tab-pane name="per_capita" tab="Per Capita">
         
@@ -368,8 +379,25 @@ function makeEchartsOption(yVar, yLabel = null) {
 <style scoped>
 .plot-card {
   max-width: 600px;
+  min-height: 300px;
+  height: auto;
 }
+
+.plot-card :deep(.n-card__content) {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0;
+}
+
+.plot-card :deep(.n-card-header__main) {
+  text-align: center;
+  width: 100%;
+}
+
 .echart {
-  height: 400px;
+  flex: 1;
+  min-height: 300px;
+  height: auto;
 }
 </style>
