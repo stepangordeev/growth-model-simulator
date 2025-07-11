@@ -1,9 +1,25 @@
 <script setup>
 import { defineComponent, ref, computed } from "vue";
-import { Line } from 'vue-chartjs';
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, PointElement, LineElement } from 'chart.js'
-ChartJS.register(Title, Tooltip, Legend, BarElement, PointElement, LineElement, CategoryScale, LinearScale)
 import { VueLatex } from 'vatex'
+import { use } from "echarts/core";
+import { CanvasRenderer } from "echarts/renderers";
+import { PieChart, LineChart } from "echarts/charts";
+import {
+  TitleComponent,
+  TooltipComponent,
+  GridComponent,
+  LegendComponent
+} from "echarts/components";
+import VChart, { THEME_KEY } from "vue-echarts";
+use([
+  CanvasRenderer,
+  LineChart,
+  PieChart,
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  GridComponent
+]);
 
 const L_1 = ref(1);
 const K_1 = ref(1);
@@ -21,7 +37,7 @@ const z = ref(0);
 const s = ref(0.3);
 const a = ref(0);
 const X = ref(1);
-const T = ref(20);
+const T = ref(50);
 
 // creates marks for naive ui's slider: marks at step intervals, with labels only at min and max
 function createLabeledMarks(min, max, step) {
@@ -212,27 +228,46 @@ const data_table = computed(() => simulate(
   T.value // T
 ));
 
-// convert data_table to chart.js format
-const Y_chart_data = computed(() => ({
-  labels: data_table.value.map(item => item.t),
-  datasets: [
-    {
-      label: 'Output (Y)',
-      data: data_table.value.map(item => item.Y),
-      borderColor: 'rgb(75, 192, 192)',
-      backgroundColor: 'rgba(75, 192, 192, 0.2)',
-      tension: 0.1
-    }
-  ]
-}));
 
-const chart_js_options = {
-        plugins: {
-            legend: {
-                display: false
-            }
-        }
+function makeEchartsOption(yVar, yLabel = null) {
+  return {
+    xAxis: {
+      type: 'category',
+      data: data_table.value.map(item => item.t),
+      name: 'Period'
+    },
+    yAxis: {
+      type: 'value',
+      // name: yLabel || yVar
+    },
+    series: [
+      {
+        data: data_table.value.map(item => item[yVar]),
+        type: 'line',
+        // smooth: true,
+        name: yLabel || yVar,
+        showSymbol: false
+      }
+    ],
+    tooltip: {
+      trigger: 'axis',
+      valueFormatter: (value) => value.toFixed(3)
+    },
+    // legend: {
+      // data: [yLabel || yVar]
+    // },
+    // grid: {
+    //   left: '10%',
+    //   right: '10%',
+    //   bottom: '15%'
+    // },
+    title: {
+      show: false,
+      text: `${yLabel || yVar} over Time`
     }
+  };
+}
+
 </script>
 
 <template>
@@ -261,10 +296,15 @@ const chart_js_options = {
     <n-tabs type="line" animated>
       <n-tab-pane name="aggregates" tab="Aggregates">
         <n-card title = "Y" class="plot-card">
-          <Line
-            id="Y-plot"
-            :data="Y_chart_data"
-            :options="chart_js_options"
+          <v-chart
+            :option="makeEchartsOption('Y', 'Output (Y)')"
+            class="echart"
+          />
+        </n-card>
+        <n-card title = "K" class="plot-card">
+          <v-chart
+            :option="makeEchartsOption('K', 'Capital (K)')"
+            class="echart"
           />
         </n-card>
       </n-tab-pane>
@@ -296,5 +336,8 @@ const chart_js_options = {
 <style scoped>
 .plot-card {
   max-width: 600px;
+}
+.echart {
+  height: 400px;
 }
 </style>
