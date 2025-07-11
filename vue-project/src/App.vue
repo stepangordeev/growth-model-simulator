@@ -1,8 +1,8 @@
 <script setup>
 import { VisXYContainer, VisLine, VisAxis, VisTooltip, VisCrosshair} from '@unovis/vue'
 import { defineComponent, ref, computed } from "vue";
-// import { VueDataUi } from 'vue-data-ui';
-// import "vue-data-ui/style.css";
+import { VueDataUi } from 'vue-data-ui';
+import "vue-data-ui/style.css";
 
 const value = ref(0);
 const alpha = ref(0.3);
@@ -77,6 +77,27 @@ const crosshair_tooltip_template = (d, x) => {
   </div>`;
 };
 
+const dataset = ref([
+  {
+    "name": "Y",
+    "series": [
+      0,
+      1,
+      2,
+      3,
+      5,
+      8,
+      13,
+      21,
+      34,
+      55,
+      89,
+      144
+    ],
+    "type": "line"
+  }
+])
+
 </script>
 
 <template>
@@ -101,13 +122,17 @@ const crosshair_tooltip_template = (d, x) => {
       </n-collapse-item>
       </n-collapse>
     </n-layout-sider>
-      <VisXYContainer :data="data" :yDomainMinConstraint="[undefined, 0]" >
+      <!-- <VisXYContainer :data="data" :yDomainMinConstraint="[undefined, 0]" >
         <VisLine :x="d => d.t" :y="d => d.y" />
         <VisAxis type="x" label="Period"/>
         <VisAxis type="y" />
         <VisTooltip/>
         <VisCrosshair :template="crosshair_tooltip_template"/>
-      </VisXYContainer>
+      </VisXYContainer> -->
+      <VueDataUi
+            component="VueUiXy"
+            :dataset="dataset"
+      />
   </n-layout>
 </template>
 
