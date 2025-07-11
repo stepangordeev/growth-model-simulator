@@ -1,7 +1,8 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
-import { defineComponent, ref } from "vue";
+import { VisXYContainer, VisLine, VisAxis, VisTooltip, VisCrosshair} from '@unovis/vue'
+import { defineComponent, ref, computed } from "vue";
+// import { VueDataUi } from 'vue-data-ui';
+// import "vue-data-ui/style.css";
 
 const value = ref(0);
 const alpha = ref(0.3);
@@ -57,6 +58,25 @@ function createLabeledMarks(min, max, step) {
 
 // Example usage:
 const marks_labeled2 = createLabeledMarks(0, 100, 0.1);
+
+
+const data = computed(() =>
+  Array.from({ length: 10 }, (_, i) => {
+    const t = i + 1;
+    return { t, y: Math.pow(t, alpha.value) };
+  })
+);
+
+const triggers = {
+  // [Line.selectors.line]: () => 'Average value'
+}
+const crosshair_tooltip_template = (d, x) => {
+  return `<div>
+    <strong>t:</strong> ${d.t.toFixed(0)}<br/>
+    <strong>y:</strong> ${d.y.toFixed(3)}
+  </div>`;
+};
+
 </script>
 
 <template>
@@ -81,7 +101,13 @@ const marks_labeled2 = createLabeledMarks(0, 100, 0.1);
       </n-collapse-item>
       </n-collapse>
     </n-layout-sider>
-    aaa
+      <VisXYContainer :data="data" :yDomainMinConstraint="[undefined, 0]" >
+        <VisLine :x="d => d.t" :y="d => d.y" />
+        <VisAxis type="x" label="Period"/>
+        <VisAxis type="y" />
+        <VisTooltip/>
+        <VisCrosshair :template="crosshair_tooltip_template"/>
+      </VisXYContainer>
   </n-layout>
 </template>
 
