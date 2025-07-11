@@ -21,6 +21,7 @@ use([
   GridComponent
 ]);
 import ParameterSlider from './ParameterSlider.vue'
+import VariablePlot from './VariablePlot.vue'
 
 const L_1 = ref(1);
 const K_1 = ref(1);
@@ -269,55 +270,7 @@ const x_axis_interval = (index, value) => {
   }
 };
 
-function makeEchartsOption(yVar, yLabel = null) {
-  return {
-    xAxis: {
-      type: 'category',
-      data: data_table.value.map(item => item.t),
-      name: 'Period',
-      boundaryGap: true,
-      axisLabel: {
-        interval: x_axis_interval,
-      },
-      axisTick: {
-        interval: x_axis_interval,
-        alignWithLabel: true
-      },
-      nameLocation: 'middle',
-      nameGap: 25
-    },
-    yAxis: {
-      type: 'value',
-      // name: yLabel || yVar
-    },
-    series: [
-      {
-        data: data_table.value.map(item => item[yVar]),
-        type: 'line',
-        // smooth: true,
-        name: yLabel || yVar,
-        showSymbol: false
-      }
-    ],
-    tooltip: {
-      trigger: 'axis',
-      valueFormatter: (value) => value.toFixed(3)
-    },
-    grid: { // padding
-      left: '10%',
-      right: '10%',
-      top: '2%',
-      bottom: '18%'
-    },
-    // legend: {
-      // data: [yLabel || yVar]
-    // },
-    title: {
-      show: false,
-      text: `${yLabel || yVar} over Time`
-    }
-  };
-}
+// Function moved to VariablePlot.vue component
 
 </script>
 
@@ -345,24 +298,8 @@ function makeEchartsOption(yVar, yLabel = null) {
     <n-tabs type="line" animated>
       <n-tab-pane name="aggregates" tab="Aggregates">
         <n-flex>
-          <n-card class="plot-card" header-style="padding: 0;">
-            <template #header>
-              <vue-latex :expression="'Y'" display-mode />
-            </template>
-            <v-chart
-              :option="makeEchartsOption('Y', 'Output (Y)')"
-              class="echart"
-            />
-          </n-card>
-          <n-card class="plot-card" header-style="padding: 0;">
-            <template #header>
-              <vue-latex :expression="'K'" display-mode />
-            </template>
-            <v-chart
-              :option="makeEchartsOption('K', 'Capital (K)')"
-              class="echart"
-            />
-          </n-card>
+          <VariablePlot variable="Y" label="Output (Y)" latex-expression="Y" :data-table="data_table" />
+          <VariablePlot variable="K" label="Capital (K)" latex-expression="K" :data-table="data_table" />
         </n-flex>
       </n-tab-pane>
       <n-tab-pane name="per_capita" tab="Per Capita">
@@ -391,27 +328,5 @@ function makeEchartsOption(yVar, yLabel = null) {
 </template>
 
 <style scoped>
-.plot-card {
-  max-width: 600px;
-  min-height: 300px;
-  height: auto;
-}
-
-.plot-card :deep(.n-card__content) {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  padding: 0;
-}
-
-.plot-card :deep(.n-card-header__main) {
-  text-align: center;
-  width: 100%;
-}
-
-.echart {
-  flex: 1;
-  min-height: 300px;
-  height: auto;
-}
+/* Styles moved to VariablePlot.vue component */
 </style>
