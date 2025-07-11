@@ -23,6 +23,10 @@ const props = defineProps({
   latexExpression: {
     type: String,
     required: true
+  },
+  title: {
+    type: String,
+    required: true
   }
 })
 
@@ -85,18 +89,23 @@ function createLabeledMarks(min, max, step, currentValue = null) {
 </script>
 
 <template>
-  <n-slider 
-    :value="props.modelValue"
-    @update:value="emit('update:modelValue', $event)"
-    :marks="marks" 
-    :max="props.max" 
-    step="mark" 
-    :tooltip="false"
-  >
-    <template #thumb>
-      <n-icon-wrapper :size="24" :border-radius="12">
-        <vue-latex :expression="props.latexExpression" display-mode />
-      </n-icon-wrapper>
-    </template>
-  </n-slider>
+    <n-tooltip :disabled="false">
+      <template #trigger>
+        <n-slider 
+          :value="props.modelValue"
+          @update:value="emit('update:modelValue', $event)"
+          :marks="marks" 
+          :max="props.max" 
+          step="mark" 
+          :tooltip="false"
+        >
+          <template #thumb>
+            <n-icon-wrapper :size="24" :border-radius="12">
+              <vue-latex :expression="props.latexExpression" display-mode />
+            </n-icon-wrapper>
+          </template>
+        </n-slider>
+      </template>
+      {{ props.title }}
+    </n-tooltip>
 </template>

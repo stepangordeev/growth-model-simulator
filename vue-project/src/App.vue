@@ -283,14 +283,38 @@ const x_axis_interval = (index, value) => {
       <n-collapse>
 
         <n-collapse-item title="Production Function">
-          <ParameterSlider v-model="alpha" :min="0" :max="1" :step="0.1" latex-expression="\alpha" />
+          <ParameterSlider v-model="alpha" :min="0" :max="1" :step="0.1" latex-expression="\alpha" title="capital share" />
+          <ParameterSlider v-model="beta" :min="0" :max="1" :step="0.1" latex-expression="\beta" title="land share" />
+          <ParameterSlider v-model="gamma" :min="0" :max="1" :step="0.1" latex-expression="\gamma" title="TFP returns to scale" />
         </n-collapse-item>
         
         <n-collapse-item title="Capital Dynamics">
+          <ParameterSlider v-model="delta" :min="0" :max="1" :step="0.1" latex-expression="\delta" title="depreciation rate" />
+          <ParameterSlider v-model="s" :min="0" :max="1" :step="0.1" latex-expression="s" title="savings rate" />
+        </n-collapse-item>
+        
+        <n-collapse-item title="Population Dynamics">
+          <ParameterSlider v-model="b0" :min="0" :max="1" :step="0.1" latex-expression="b_0" title="birth rate" />
+          <ParameterSlider v-model="d0" :min="0" :max="1" :step="0.1" latex-expression="d_0" title="death rate intercept" />
+          <ParameterSlider v-model="d1" :min="0" :max="1" :step="0.1" latex-expression="d_1" title="death rate decline with income" />
+        </n-collapse-item>
+        
+        <n-collapse-item title="Research Dynamics">
+          <ParameterSlider v-model="z" :min="0" :max="10" :step="1" latex-expression="z" title="research productivity" />
+          <ParameterSlider v-model="phi" :min="0" :max="1" :step="0.1" latex-expression="\phi" title="research returns to scale" />
+          <ParameterSlider v-model="theta" :min="0" :max="1" :step="0.1" latex-expression="\theta" title="research automation" />
+          <ParameterSlider v-model="a" :min="0" :max="1" :step="0.1" latex-expression="a" title="researcher share" />
+        </n-collapse-item>
+        
+        <n-collapse-item title="Initial Values">
+          <ParameterSlider v-model="K_1" :min="1" :max="10" :step="1" latex-expression="K_1" title="initial capital" />
+          <ParameterSlider v-model="L_1" :min="1" :max="10" :step="1" latex-expression="L_1" title="initial population" />
+          <ParameterSlider v-model="A_1" :min="1" :max="10" :step="1" latex-expression="A_1" title="initial TFP" />
+          <ParameterSlider v-model="X" :min="1" :max="10" :step="1" latex-expression="X" title="permanent land" />
         </n-collapse-item>
 
         <n-collapse-item title="Simulation Settings">
-          <ParameterSlider v-model="T" :min="50" :max="500" :step="50" latex-expression="T" />
+          <ParameterSlider v-model="T" :min="50" :max="500" :step="50" latex-expression="T" title="time periods" />
         </n-collapse-item>
 
       </n-collapse>
