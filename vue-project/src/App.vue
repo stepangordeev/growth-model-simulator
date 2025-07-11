@@ -98,6 +98,48 @@ const dataset = ref([
   }
 ])
 
+const columns = [
+    {
+      title: "Period",
+      key: "t"
+    },
+    {
+      title: "Y",
+      key: "Y"
+    },
+    {
+      title: "K",
+      key: "K"
+    }
+  ]
+
+const data_table = [
+  { t: 1, Y: 0, K: 0 },
+  { t: 2, Y: 1, K: 1 },
+  { t: 3, Y: 2, K: 2 },
+  { t: 4, Y: 3, K: 3 },
+  { t: 5, Y: 5, K: 5 },
+  { t: 6, Y: 8, K: 8 },
+  { t: 7, Y: 13, K: 13 },
+  { t: 8, Y: 21, K: 21 },
+  { t: 9, Y: 34, K: 34 }
+];
+
+// export default defineComponent({
+//   setup() {
+//     const message = useMessage();
+//     return {
+//       data,
+//       columns: createColumns({
+//         play(row) {
+//           message.info(`Play ${row.title}`);
+//         }
+//       }),
+//       pagination: false
+//     };
+//   }
+// });
+
 </script>
 
 <template>
@@ -129,10 +171,15 @@ const dataset = ref([
         <VisTooltip/>
         <VisCrosshair :template="crosshair_tooltip_template"/>
       </VisXYContainer> -->
-      <VueDataUi
+      <!-- <VueDataUi
             component="VueUiXy"
             :dataset="dataset"
-      />
+      /> -->
+    <n-data-table
+      :columns="columns"
+      :data="data_table"
+      :bordered="false"
+    />
   </n-layout>
 </template>
 
