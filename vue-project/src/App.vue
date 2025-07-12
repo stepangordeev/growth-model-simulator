@@ -439,28 +439,28 @@ connect("all")
         <n-card :bordered="false" size="small">
         <n-grid cols="2 s:1 m:1 l:2 xl:3 2xl:5" responsive="screen" :x-gap="16" :y-gap="16">
           <n-grid-item>
-            <VariablePlot variable="g_Y" label="Growth of Output" latex-expression="g_Y" :data-table="data_table" />
+            <VariablePlot variable="g_Y" label="Growth Rate of Output" latex-expression="g_Y" :data-table="data_table" />
           </n-grid-item>
           <n-grid-item>
-            <VariablePlot variable="g_A" label="Growth of TFP" latex-expression="g_A" :data-table="data_table" />
+            <VariablePlot variable="g_A" label="Growth Rate of TFP" latex-expression="g_A" :data-table="data_table" />
           </n-grid-item>
           <n-grid-item>
-            <VariablePlot variable="g_K" label="Growth of Capital" latex-expression="g_K" :data-table="data_table" />
+            <VariablePlot variable="g_K" label="Growth Rate of Capital" latex-expression="g_K" :data-table="data_table" />
           </n-grid-item>
           <n-grid-item>
-            <VariablePlot variable="g_L" label="Growth of Labor" latex-expression="g_L" :data-table="data_table" />
+            <VariablePlot variable="g_L" label="Growth Rate of Labor" latex-expression="g_L" :data-table="data_table" />
           </n-grid-item>
           <n-grid-item>
-            <VariablePlot variable="g_C" label="Growth of Consumption" latex-expression="g_C" :data-table="data_table" />
+            <VariablePlot variable="g_C" label="Growth Rate of Consumption" latex-expression="g_C" :data-table="data_table" />
           </n-grid-item>
           <n-grid-item>
-            <VariablePlot variable="g_y" label="Growth of Output per Capita" latex-expression="g_y" :data-table="data_table" />
+            <VariablePlot variable="g_y" label="Growth Rate of Output per Capita" latex-expression="g_y" :data-table="data_table" />
           </n-grid-item>
           <n-grid-item>
-            <VariablePlot variable="g_k" label="Growth of Capital per Capita" latex-expression="g_k" :data-table="data_table" />
+            <VariablePlot variable="g_k" label="Growth Rate of Capital per Capita" latex-expression="g_k" :data-table="data_table" />
           </n-grid-item>
           <n-grid-item>
-            <VariablePlot variable="g_c" label="Growth of Consumption per Capita" latex-expression="g_c" :data-table="data_table" />
+            <VariablePlot variable="g_c" label="Growth Rate of Consumption per Capita" latex-expression="g_c" :data-table="data_table" />
           </n-grid-item>
         </n-grid>
         </n-card>
