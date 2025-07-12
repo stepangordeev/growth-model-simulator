@@ -174,7 +174,7 @@ function makeEchartsOption(yVar, yLabel = null) {
 
 <style scoped>
 .plot-card {
-  max-width: 600px;
+  /* max-width: 600px; */
   min-height: 300px;
   height: auto;
 }
