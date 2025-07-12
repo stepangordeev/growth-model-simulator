@@ -14,13 +14,11 @@
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/vue-fontawesome": "^3.0.8",
     "echarts": "^5.6.0",
-    "katex": "^0.13.24",
     "naive-ui": "^2.42.0",
     "vatex": "^0.1.0",
     "vfonts": "^0.0.3",
     "vue": "^3.5.17",
-    "vue-echarts": "^7.0.3",
-    "vue-katex": "^0.5.0"
+    "vue-echarts": "^7.0.3"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.0",
