@@ -389,6 +389,7 @@ connect("all")
             <FontAwesomeIcon icon="globe" />
             &nbsp;&nbsp;<span>Aggregates</span>
         </template>
+        <n-card :bordered="false" size="small">
         <n-grid cols="2 s:1 m:1 l:2 xl:3 2xl:5" responsive="screen" :x-gap="16" :y-gap="16">
           <n-grid-item>
             <VariablePlot variable="Y" label="Output" latex-expression="Y" :data-table="data_table" />
@@ -406,13 +407,15 @@ connect("all")
             <VariablePlot variable="C" label="Consumption" latex-expression="C" :data-table="data_table" />
           </n-grid-item>
         </n-grid>
+        </n-card>
       </n-tab-pane>
       <n-tab-pane name="per_capita">
         <template #tab>
             <FontAwesomeIcon icon="person" />
             &nbsp;&nbsp;<span>Per Capita</span>
         </template>
-        <n-grid cols="2 s:1 m:1 l:2 xl:3 2xl:5" responsive="screen">
+        <n-card :bordered="false" size="small">
+        <n-grid cols="2 s:1 m:1 l:2 xl:3 2xl:5" responsive="screen" :x-gap="16" :y-gap="16">
           <n-grid-item>
             <VariablePlot variable="y" label="Output per Capita" latex-expression="y" :data-table="data_table" />
           </n-grid-item>
@@ -426,13 +429,15 @@ connect("all")
             <VariablePlot variable="c" label="Consumption per Capita" latex-expression="c" :data-table="data_table" />
           </n-grid-item>
         </n-grid>
+        </n-card>
       </n-tab-pane>
       <n-tab-pane name="growth">
         <template #tab>
               <FontAwesomeIcon icon="arrow-trend-up" />
             &nbsp;&nbsp;<span>Growth Rates</span>
         </template>
-        <n-grid cols="2 s:1 m:1 l:2 xl:3 2xl:5" responsive="screen">
+        <n-card :bordered="false" size="small">
+        <n-grid cols="2 s:1 m:1 l:2 xl:3 2xl:5" responsive="screen" :x-gap="16" :y-gap="16">
           <n-grid-item>
             <VariablePlot variable="g_Y" label="Growth of Output" latex-expression="g_Y" :data-table="data_table" />
           </n-grid-item>
@@ -458,12 +463,14 @@ connect("all")
             <VariablePlot variable="g_c" label="Growth of Consumption per Capita" latex-expression="g_c" :data-table="data_table" />
           </n-grid-item>
         </n-grid>
+        </n-card>
       </n-tab-pane>
       <n-tab-pane name="table">
         <template #tab>
             <FontAwesomeIcon icon="table" />
             &nbsp;&nbsp;<span>Table</span>
         </template>
+        <n-card :bordered="false" size="small">
         <n-data-table
           :columns="data_table_columns"
           :data="data_table"
@@ -472,6 +479,7 @@ connect("all")
           :scroll-x="1800"
           striped
         />
+      </n-card>
       </n-tab-pane>
     </n-tabs>
     
@@ -483,4 +491,5 @@ connect("all")
 .n-collapse-item__content-inner {
   padding: 50px 0;
 }
+
 </style>
