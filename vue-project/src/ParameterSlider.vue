@@ -101,7 +101,7 @@ function createLabeledMarks(min, max, step, currentValue = null) {
         >
           <template #thumb>
             <n-icon-wrapper :size="24" :border-radius="12">
-              <vue-latex :expression="props.latexExpression" display-mode />
+              <vue-latex :expression="props.latexExpression" fontsize="14" display-mode style="color: var(--n-text-color);"/>
             </n-icon-wrapper>
           </template>
         </n-slider>
@@ -109,3 +109,9 @@ function createLabeledMarks(min, max, step, currentValue = null) {
       {{ props.title }}
     </n-tooltip>
 </template>
+
+<style scoped>
+.n-slider {
+  padding: 15px 0;
+}
+</style>

@@ -31,6 +31,32 @@ import { connect } from "echarts";
 /* add icons to the library */
 library.add(faArrowTrendUp, faHammer, faIndustry, faBabyCarriage, faFlask, faGlobe, faPerson, faRocket, faTable, faGamepad)
 
+// fonts
+// sans. If change it, also update echarts_font in VariablePlot.vue
+import 'vfonts/Inter.css'
+// monospace
+import 'vfonts/FiraCode.css'
+
+import { NConfigProvider } from 'naive-ui'
+
+  /**
+   * Use this for type hints under js file
+   * @type import('naive-ui').GlobalThemeOverrides
+   */
+  const themeOverrides = {
+    common: {
+      // primaryColor: '#FFBA18'
+      primaryColor: '#f99a07'
+    },
+    Collapse: {
+      titleFontSize: '15px'
+    },
+    Tabs: {
+      tabFontSizeMedium: '14px'
+    }
+  }
+
+
 const L_1 = ref(1);
 const K_1 = ref(1);
 const A_1 = ref(1);
@@ -294,6 +320,7 @@ connect("all")
 </script>
 
 <template>
+  <n-config-provider :theme-overrides="themeOverrides">
   <n-layout has-sider>
 
     <n-layout-sider content-style="padding: 24px;">
@@ -449,7 +476,11 @@ connect("all")
     </n-tabs>
     
   </n-layout>
+  </n-config-provider>
 </template>
 
 <style scoped>
+.n-collapse-item__content-inner {
+  padding: 50px 0;
+}
 </style>

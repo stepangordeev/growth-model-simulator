@@ -1,4 +1,5 @@
 <script setup>
+import { text } from '@fortawesome/fontawesome-svg-core';
 import { VueLatex } from 'vatex'
 import VChart from "vue-echarts"
 
@@ -21,6 +22,9 @@ const props = defineProps({
     required: true
   }
 })
+
+// Font configuration
+const echarts_font = "Fira Sans";
 
 // Color mapping for different variable groups
 const getVariableColor = (variable) => {
@@ -106,6 +110,7 @@ function makeEchartsOption(yVar, yLabel = null) {
       boundaryGap: true,
       axisLabel: {
         interval: x_axis_interval,
+        fontFamily: echarts_font 
       },
       axisTick: {
         interval: x_axis_interval,
@@ -121,6 +126,9 @@ function makeEchartsOption(yVar, yLabel = null) {
     },
     yAxis: {
       type: 'value',
+      axisLabel: {
+        fontFamily: echarts_font
+      }
       // name: yLabel || yVar
     },
     series: [
@@ -141,6 +149,9 @@ function makeEchartsOption(yVar, yLabel = null) {
     tooltip: {
       trigger: 'axis',
       valueFormatter: (value) => value !== undefined ? value.toFixed(3) : '-' // Format values to 3 decimal places, or show '-' if undefined (e.g. growth rates at first period)
+    },
+    textStyle: {
+      fontFamily: echarts_font
     },
     grid: { // padding
       left: '10%',
