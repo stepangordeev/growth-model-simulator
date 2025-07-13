@@ -26,10 +26,10 @@ import ParameterSlider from './ParameterSlider.vue'
 import VariablePlot from './VariablePlot.vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome'
-import { faArrowTrendUp, faHammer, faIndustry, faBabyCarriage, faFlask, faGlobe, faPerson, faRocket, faTable, faGamepad } from '@fortawesome/free-solid-svg-icons'
+import { faArrowTrendUp, faHammer, faIndustry, faBabyCarriage, faFlask, faGlobe, faPerson, faRocket, faStar, faTable, faGamepad } from '@fortawesome/free-solid-svg-icons'
 import { connect } from "echarts";
 /* add icons to the library */
-library.add(faArrowTrendUp, faHammer, faIndustry, faBabyCarriage, faFlask, faGlobe, faPerson, faRocket, faTable, faGamepad)
+library.add(faArrowTrendUp, faHammer, faIndustry, faBabyCarriage, faFlask, faGlobe, faPerson, faRocket, faStar, faTable, faGamepad)
 
 // fonts
 // sans. If change it, also update echarts_font in VariablePlot.vue
@@ -301,6 +301,30 @@ const data_table = computed(() => simulate(
   T.value // T
 ));
 
+const model_chosen = ref("Solow");
+const models = [
+  {
+    value: "Solow",
+    label: "Solow"
+  },
+  {
+    value: "Malthus",
+    label: "Malthus"
+  },
+  {
+    value: "Romer",
+    label: "Romer"
+  },
+  {
+    value: "Jones",
+    label: "Jones"
+  },
+  {
+    value: "General",
+    label: "General"
+  }
+]
+
 const x_axis_interval = (index, value) => {
   if (index === 0) return true; // Show period 1
   // For remaining periods, show labels at nice intervals
@@ -321,175 +345,232 @@ connect("all")
 
 <template>
   <n-config-provider :theme-overrides="themeOverrides">
-  <n-layout has-sider>
 
-    <n-layout-sider content-style="padding: 24px;">
+  <n-layout style="min-height: 100vh;">
 
-      <n-divider>Parameters</n-divider>
-      <n-collapse>
+    <n-layout-header style="height: 64px; padding:24px" bordered>
 
-        <n-collapse-item title="Production Function">
-          <template #header-extra>
-            <FontAwesomeIcon icon="hammer" />
-          </template>
-          <ParameterSlider v-model="alpha" :min="0" :max="1" :step="0.1" latex-expression="\alpha" title="capital share" />
-          <ParameterSlider v-model="beta" :min="0" :max="1" :step="0.1" latex-expression="\beta" title="land share" />
-          <ParameterSlider v-model="gamma" :min="0" :max="1" :step="0.1" latex-expression="\gamma" title="TFP returns to scale" />
-        </n-collapse-item>
+      <n-flex justify="space-between">
+
+        <n-gradient-text type="primary" size="24">
+            Growth Model Simulator
+        </n-gradient-text>
+
+        <n-button quaternary type="default" tag="a" href="https://sgordeev.com">
+          Stepan Gordeev
+        </n-button>
+
+        </n-flex>
+
+    </n-layout-header>
+
+    <n-layout has-sider>
+
+      <n-layout-sider content-style="padding: 24px;" bordered>
+
+        <n-h3 style="text-align: center;">Parameters</n-h3>
+
+        <n-collapse>
+
+          <n-collapse-item title="Production Function">
+            <template #header-extra>
+              <FontAwesomeIcon icon="hammer" />
+            </template>
+            <ParameterSlider v-model="alpha" :min="0" :max="1" :step="0.1" latex-expression="\alpha" title="capital share" />
+            <ParameterSlider v-model="beta" :min="0" :max="1" :step="0.1" latex-expression="\beta" title="land share" />
+            <ParameterSlider v-model="gamma" :min="0" :max="1" :step="0.1" latex-expression="\gamma" title="TFP returns to scale" />
+          </n-collapse-item>
+          
+          <n-collapse-item title="Capital Dynamics">
+            <template #header-extra>
+              <FontAwesomeIcon icon="industry" />
+            </template>
+            <ParameterSlider v-model="delta" :min="0" :max="1" :step="0.1" latex-expression="\delta" title="depreciation rate" />
+            <ParameterSlider v-model="s" :min="0" :max="1" :step="0.1" latex-expression="s" title="savings rate" />
+          </n-collapse-item>
+          
+          <n-collapse-item title="Population Dynamics">
+            <template #header-extra>
+              <FontAwesomeIcon icon="baby-carriage" />
+            </template>
+            <ParameterSlider v-model="b0" :min="0" :max="1" :step="0.1" latex-expression="b_0" title="birth rate" />
+            <ParameterSlider v-model="d0" :min="0" :max="1" :step="0.1" latex-expression="d_0" title="death rate intercept" />
+            <ParameterSlider v-model="d1" :min="0" :max="1" :step="0.1" latex-expression="d_1" title="death rate decline with income" />
+          </n-collapse-item>
+          
+          <n-collapse-item title="Research Dynamics">
+            <template #header-extra>
+              <FontAwesomeIcon icon="flask" />
+            </template>
+            <ParameterSlider v-model="z" :min="0" :max="10" :step="1" latex-expression="z" title="research productivity" />
+            <ParameterSlider v-model="phi" :min="0" :max="1" :step="0.1" latex-expression="\phi" title="research returns to scale" />
+            <ParameterSlider v-model="theta" :min="0" :max="1" :step="0.1" latex-expression="\theta" title="research automation" />
+            <ParameterSlider v-model="a" :min="0" :max="1" :step="0.1" latex-expression="a" title="researcher share" />
+          </n-collapse-item>
+          
+          <n-collapse-item title="Initial Values">
+            <template #header-extra>
+              <FontAwesomeIcon icon="rocket" />
+            </template>
+            <ParameterSlider v-model="K_1" :min="1" :max="10" :step="1" latex-expression="K_1" title="initial capital" />
+            <ParameterSlider v-model="L_1" :min="1" :max="10" :step="1" latex-expression="L_1" title="initial population" />
+            <ParameterSlider v-model="A_1" :min="1" :max="10" :step="1" latex-expression="A_1" title="initial TFP" />
+            <ParameterSlider v-model="X" :min="1" :max="10" :step="1" latex-expression="X" title="permanent land" />
+          </n-collapse-item>
+
+          <n-collapse-item title="Simulation Settings">
+            <template #header-extra>
+              <FontAwesomeIcon icon="gamepad" />
+            </template>
+            <ParameterSlider v-model="T" :min="50" :max="500" :step="50" latex-expression="T" title="time periods" />
+          </n-collapse-item>
+
+        </n-collapse>
+      </n-layout-sider>
+
+      <n-layout content-style="padding: 0px 24px;">
+      
+      <n-tabs type="line" animated>
         
-        <n-collapse-item title="Capital Dynamics">
-          <template #header-extra>
-            <FontAwesomeIcon icon="industry" />
+        <n-tab-pane name="model">
+          <template #tab>
+              <FontAwesomeIcon icon="star" />
+              &nbsp;&nbsp;<span>Model</span>
           </template>
-          <ParameterSlider v-model="delta" :min="0" :max="1" :step="0.1" latex-expression="\delta" title="depreciation rate" />
-          <ParameterSlider v-model="s" :min="0" :max="1" :step="0.1" latex-expression="s" title="savings rate" />
-        </n-collapse-item>
-        
-        <n-collapse-item title="Population Dynamics">
-          <template #header-extra>
-            <FontAwesomeIcon icon="baby-carriage" />
-          </template>
-          <ParameterSlider v-model="b0" :min="0" :max="1" :step="0.1" latex-expression="b_0" title="birth rate" />
-          <ParameterSlider v-model="d0" :min="0" :max="1" :step="0.1" latex-expression="d_0" title="death rate intercept" />
-          <ParameterSlider v-model="d1" :min="0" :max="1" :step="0.1" latex-expression="d_1" title="death rate decline with income" />
-        </n-collapse-item>
-        
-        <n-collapse-item title="Research Dynamics">
-          <template #header-extra>
-            <FontAwesomeIcon icon="flask" />
-          </template>
-          <ParameterSlider v-model="z" :min="0" :max="10" :step="1" latex-expression="z" title="research productivity" />
-          <ParameterSlider v-model="phi" :min="0" :max="1" :step="0.1" latex-expression="\phi" title="research returns to scale" />
-          <ParameterSlider v-model="theta" :min="0" :max="1" :step="0.1" latex-expression="\theta" title="research automation" />
-          <ParameterSlider v-model="a" :min="0" :max="1" :step="0.1" latex-expression="a" title="researcher share" />
-        </n-collapse-item>
-        
-        <n-collapse-item title="Initial Values">
-          <template #header-extra>
-            <FontAwesomeIcon icon="rocket" />
-          </template>
-          <ParameterSlider v-model="K_1" :min="1" :max="10" :step="1" latex-expression="K_1" title="initial capital" />
-          <ParameterSlider v-model="L_1" :min="1" :max="10" :step="1" latex-expression="L_1" title="initial population" />
-          <ParameterSlider v-model="A_1" :min="1" :max="10" :step="1" latex-expression="A_1" title="initial TFP" />
-          <ParameterSlider v-model="X" :min="1" :max="10" :step="1" latex-expression="X" title="permanent land" />
-        </n-collapse-item>
+          
+          <n-flex vertical>
 
-        <n-collapse-item title="Simulation Settings">
-          <template #header-extra>
-            <FontAwesomeIcon icon="gamepad" />
-          </template>
-          <ParameterSlider v-model="T" :min="50" :max="500" :step="50" latex-expression="T" title="time periods" />
-        </n-collapse-item>
+            <n-card>
+              This dashboard simulates several models of economic growth that are commonly found in undergraduate macroeconomics and growth courses.
+            </n-card>
+            
+            <n-radio-group v-model:value="model_chosen" name="radiobuttongroup1">
+              <n-radio-button
+                v-for="model in models"
+                :key="model.value"
+                :value="model.value"
+                :label="model.label"
+              />
+            </n-radio-group>
 
-      </n-collapse>
-    </n-layout-sider>
-    <n-tabs type="line" animated>
-      <n-tab-pane name="aggregates">
-        <template #tab>
-            <FontAwesomeIcon icon="globe" />
-            &nbsp;&nbsp;<span>Aggregates</span>
-        </template>
-        <n-card :bordered="false" size="small">
-        <n-grid cols="2 s:1 m:1 l:2 xl:3 2xl:5" responsive="screen" :x-gap="16" :y-gap="16">
-          <n-grid-item>
-            <VariablePlot variable="Y" label="Output" latex-expression="Y" :data-table="data_table" />
-          </n-grid-item>
-          <n-grid-item>
-            <VariablePlot variable="A" label="TFP" latex-expression="A" :data-table="data_table" />
-          </n-grid-item>
-          <n-grid-item>
-            <VariablePlot variable="K" label="Capital" latex-expression="K" :data-table="data_table" />
-          </n-grid-item>
-          <n-grid-item>
-            <VariablePlot variable="L" label="Labor" latex-expression="L" :data-table="data_table" />
-          </n-grid-item>
-          <n-grid-item>
-            <VariablePlot variable="C" label="Consumption" latex-expression="C" :data-table="data_table" />
-          </n-grid-item>
-        </n-grid>
+          </n-flex>
+        </n-tab-pane>
+
+        <n-tab-pane name="aggregates">
+          <template #tab>
+              <FontAwesomeIcon icon="globe" />
+              &nbsp;&nbsp;<span>Aggregates</span>
+          </template>
+          <n-card :bordered="false" size="small">
+          <n-grid cols="2 s:1 m:1 l:2 xl:3 2xl:5" responsive="screen" :x-gap="16" :y-gap="16">
+            <n-grid-item>
+              <VariablePlot variable="Y" label="Output" latex-expression="Y" :data-table="data_table" />
+            </n-grid-item>
+            <n-grid-item>
+              <VariablePlot variable="A" label="TFP" latex-expression="A" :data-table="data_table" />
+            </n-grid-item>
+            <n-grid-item>
+              <VariablePlot variable="K" label="Capital" latex-expression="K" :data-table="data_table" />
+            </n-grid-item>
+            <n-grid-item>
+              <VariablePlot variable="L" label="Labor" latex-expression="L" :data-table="data_table" />
+            </n-grid-item>
+            <n-grid-item>
+              <VariablePlot variable="C" label="Consumption" latex-expression="C" :data-table="data_table" />
+            </n-grid-item>
+          </n-grid>
+          </n-card>
+        </n-tab-pane>
+        
+        <n-tab-pane name="per_capita">
+          <template #tab>
+              <FontAwesomeIcon icon="person" />
+              &nbsp;&nbsp;<span>Per Capita</span>
+          </template>
+          <n-card :bordered="false" size="small">
+          <n-grid cols="2 s:1 m:1 l:2 xl:3 2xl:5" responsive="screen" :x-gap="16" :y-gap="16">
+            <n-grid-item>
+              <VariablePlot variable="y" label="Output per Capita" latex-expression="y" :data-table="data_table" />
+            </n-grid-item>
+            <n-grid-item>
+              <VariablePlot variable="k" label="Capital per Capita" latex-expression="k" :data-table="data_table" />
+            </n-grid-item>
+            <n-grid-item>
+              <VariablePlot variable="x" label="Land per Capita" latex-expression="x" :data-table="data_table" />
+            </n-grid-item>
+            <n-grid-item>
+              <VariablePlot variable="c" label="Consumption per Capita" latex-expression="c" :data-table="data_table" />
+            </n-grid-item>
+          </n-grid>
+          </n-card>
+        </n-tab-pane>
+
+
+        <n-tab-pane name="growth">
+          <template #tab>
+                <FontAwesomeIcon icon="arrow-trend-up" />
+              &nbsp;&nbsp;<span>Growth Rates</span>
+          </template>
+          <n-card :bordered="false" size="small">
+          <n-grid cols="2 s:1 m:1 l:2 xl:3 2xl:5" responsive="screen" :x-gap="16" :y-gap="16">
+            <n-grid-item>
+              <VariablePlot variable="g_Y" label="Growth Rate of Output" latex-expression="g_Y" :data-table="data_table" />
+            </n-grid-item>
+            <n-grid-item>
+              <VariablePlot variable="g_A" label="Growth Rate of TFP" latex-expression="g_A" :data-table="data_table" />
+            </n-grid-item>
+            <n-grid-item>
+              <VariablePlot variable="g_K" label="Growth Rate of Capital" latex-expression="g_K" :data-table="data_table" />
+            </n-grid-item>
+            <n-grid-item>
+              <VariablePlot variable="g_L" label="Growth Rate of Labor" latex-expression="g_L" :data-table="data_table" />
+            </n-grid-item>
+            <n-grid-item>
+              <VariablePlot variable="g_C" label="Growth Rate of Consumption" latex-expression="g_C" :data-table="data_table" />
+            </n-grid-item>
+            <n-grid-item>
+              <VariablePlot variable="g_y" label="Growth Rate of Output per Capita" latex-expression="g_y" :data-table="data_table" />
+            </n-grid-item>
+            <n-grid-item>
+              <VariablePlot variable="g_k" label="Growth Rate of Capital per Capita" latex-expression="g_k" :data-table="data_table" />
+            </n-grid-item>
+            <n-grid-item>
+              <VariablePlot variable="g_c" label="Growth Rate of Consumption per Capita" latex-expression="g_c" :data-table="data_table" />
+            </n-grid-item>
+          </n-grid>
+          </n-card>
+        </n-tab-pane>
+        
+
+        <n-tab-pane name="table">
+          <template #tab>
+              <FontAwesomeIcon icon="table" />
+              &nbsp;&nbsp;<span>Table</span>
+          </template>
+          <n-card :bordered="false" size="small">
+          <n-data-table
+            :columns="data_table_columns"
+            :data="data_table"
+            :bordered="true"
+            max-height="calc(100vh - 150px)"
+            :scroll-x="1800"
+            striped
+          />
         </n-card>
-      </n-tab-pane>
-      <n-tab-pane name="per_capita">
-        <template #tab>
-            <FontAwesomeIcon icon="person" />
-            &nbsp;&nbsp;<span>Per Capita</span>
-        </template>
-        <n-card :bordered="false" size="small">
-        <n-grid cols="2 s:1 m:1 l:2 xl:3 2xl:5" responsive="screen" :x-gap="16" :y-gap="16">
-          <n-grid-item>
-            <VariablePlot variable="y" label="Output per Capita" latex-expression="y" :data-table="data_table" />
-          </n-grid-item>
-          <n-grid-item>
-            <VariablePlot variable="k" label="Capital per Capita" latex-expression="k" :data-table="data_table" />
-          </n-grid-item>
-          <n-grid-item>
-            <VariablePlot variable="x" label="Land per Capita" latex-expression="x" :data-table="data_table" />
-          </n-grid-item>
-          <n-grid-item>
-            <VariablePlot variable="c" label="Consumption per Capita" latex-expression="c" :data-table="data_table" />
-          </n-grid-item>
-        </n-grid>
-        </n-card>
-      </n-tab-pane>
-      <n-tab-pane name="growth">
-        <template #tab>
-              <FontAwesomeIcon icon="arrow-trend-up" />
-            &nbsp;&nbsp;<span>Growth Rates</span>
-        </template>
-        <n-card :bordered="false" size="small">
-        <n-grid cols="2 s:1 m:1 l:2 xl:3 2xl:5" responsive="screen" :x-gap="16" :y-gap="16">
-          <n-grid-item>
-            <VariablePlot variable="g_Y" label="Growth Rate of Output" latex-expression="g_Y" :data-table="data_table" />
-          </n-grid-item>
-          <n-grid-item>
-            <VariablePlot variable="g_A" label="Growth Rate of TFP" latex-expression="g_A" :data-table="data_table" />
-          </n-grid-item>
-          <n-grid-item>
-            <VariablePlot variable="g_K" label="Growth Rate of Capital" latex-expression="g_K" :data-table="data_table" />
-          </n-grid-item>
-          <n-grid-item>
-            <VariablePlot variable="g_L" label="Growth Rate of Labor" latex-expression="g_L" :data-table="data_table" />
-          </n-grid-item>
-          <n-grid-item>
-            <VariablePlot variable="g_C" label="Growth Rate of Consumption" latex-expression="g_C" :data-table="data_table" />
-          </n-grid-item>
-          <n-grid-item>
-            <VariablePlot variable="g_y" label="Growth Rate of Output per Capita" latex-expression="g_y" :data-table="data_table" />
-          </n-grid-item>
-          <n-grid-item>
-            <VariablePlot variable="g_k" label="Growth Rate of Capital per Capita" latex-expression="g_k" :data-table="data_table" />
-          </n-grid-item>
-          <n-grid-item>
-            <VariablePlot variable="g_c" label="Growth Rate of Consumption per Capita" latex-expression="g_c" :data-table="data_table" />
-          </n-grid-item>
-        </n-grid>
-        </n-card>
-      </n-tab-pane>
-      <n-tab-pane name="table">
-        <template #tab>
-            <FontAwesomeIcon icon="table" />
-            &nbsp;&nbsp;<span>Table</span>
-        </template>
-        <n-card :bordered="false" size="small">
-        <n-data-table
-          :columns="data_table_columns"
-          :data="data_table"
-          :bordered="true"
-          max-height="calc(100vh - 150px)"
-          :scroll-x="1800"
-          striped
-        />
-      </n-card>
-      </n-tab-pane>
-    </n-tabs>
-    
-  </n-layout>
+        </n-tab-pane>
+
+      </n-tabs>
+      </n-layout>
+      
+    </n-layout>
+    </n-layout>
   </n-config-provider>
 </template>
 
 <style scoped>
-.n-collapse-item__content-inner {
-  padding: 50px 0;
-}
+
+  .n-collapse-item__content-inner {
+    padding: 50px 0;
+  }
 
 </style>
