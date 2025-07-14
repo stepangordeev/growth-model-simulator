@@ -348,9 +348,9 @@ connect("all")
 
   <n-layout style="min-height: 100vh;">
 
-    <n-layout-header style="height: 64px; padding:24px" bordered>
+    <n-layout-header style="padding: 10px 20px;" bordered>
 
-      <n-flex justify="space-between">
+      <n-flex justify="space-between" align-items="center">
 
         <n-gradient-text type="primary" size="24">
             Growth Model Simulator
@@ -428,7 +428,7 @@ connect("all")
         </n-collapse>
       </n-layout-sider>
 
-      <n-layout content-style="padding: 0px 24px;">
+      <n-layout-content content-style="padding: 0px 24px;">
       
       <n-tabs type="line" animated>
         
@@ -560,7 +560,7 @@ connect("all")
         </n-tab-pane>
 
       </n-tabs>
-      </n-layout>
+      </n-layout-content>
       
     </n-layout>
     </n-layout>
