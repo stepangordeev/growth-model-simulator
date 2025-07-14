@@ -71,7 +71,7 @@ const d0 = ref(0);
 const d1 = ref(0);
 const z = ref(0);
 const s = ref(0.3);
-const a = ref(0);
+const rho = ref(0);
 const X = ref(1);
 const T = ref(100);
 
@@ -191,7 +191,7 @@ const simulate = (
   d1 = 0,
   z = 0,
   s = 0,
-  a = 0, // researcher share
+  rho = 0,
   X = 1,
   T = 20
 ) => {
@@ -221,9 +221,9 @@ const simulate = (
   L_arr[0] = L_1;
   K_arr[0] = K_1;
   A_arr[0] = A_1;
-  Y_arr[0] = Y(A_arr[0], K_arr[0], X, L_arr[0] * (1 - a), gamma, alpha, beta);
+  Y_arr[0] = Y(A_arr[0], K_arr[0], X, L_arr[0] * (1 - rho), gamma, alpha, beta);
   I_y_arr[0] = I_y(Y_arr[0], s);
-  I_a_arr[0] = I_a(A_arr[0], K_arr[0], L_arr[0] * a, z, phi, theta);
+  I_a_arr[0] = I_a(A_arr[0], K_arr[0], L_arr[0] * rho, z, phi, theta);
   C_arr[0] = Y_arr[0] - I_y_arr[0];
   y_arr[0] = Y_arr[0] / L_arr[0];
   k_arr[0] = K_arr[0] / L_arr[0];
@@ -235,9 +235,9 @@ const simulate = (
     A_arr[t + 1] = A_lom(A_arr[t], I_a_arr[t]);
     L_arr[t + 1] = L_lom(L_arr[t], b0, d0, d1, y_arr[t]);
     K_arr[t + 1] = K_lom(K_arr[t], I_y_arr[t], delta);
-    Y_arr[t + 1] = Y(A_arr[t + 1], K_arr[t + 1], X, L_arr[t + 1] * (1 - a), gamma, alpha, beta);
+    Y_arr[t + 1] = Y(A_arr[t + 1], K_arr[t + 1], X, L_arr[t + 1] * (1 - rho), gamma, alpha, beta);
     I_y_arr[t + 1] = I_y(Y_arr[t + 1], s);
-    I_a_arr[t + 1] = I_a(A_arr[t + 1], K_arr[t + 1], L_arr[t + 1] * a, z, phi, theta);
+    I_a_arr[t + 1] = I_a(A_arr[t + 1], K_arr[t + 1], L_arr[t + 1] * rho, z, phi, theta);
     C_arr[t + 1] = Y_arr[t + 1] - I_y_arr[t + 1];
     c_arr[t + 1] = C_arr[t + 1] / L_arr[t + 1];
     y_arr[t + 1] = Y_arr[t + 1] / L_arr[t + 1];
@@ -296,7 +296,7 @@ const data_table = computed(() => simulate(
   d1.value, // d1
   z.value, // z
   s.value, // s
-  a.value, // a (researcher share)
+  rho.value, // rho
   X.value, // X
   T.value // T
 ));
@@ -393,9 +393,9 @@ connect("all")
             <template #header-extra>
               <FontAwesomeIcon icon="baby-carriage" />
             </template>
-            <ParameterSlider v-model="b0" :min="0" :max="1" :step="0.1" latex-expression="b_0" title="birth rate" />
-            <ParameterSlider v-model="d0" :min="0" :max="1" :step="0.1" latex-expression="d_0" title="death rate intercept" />
-            <ParameterSlider v-model="d1" :min="0" :max="1" :step="0.1" latex-expression="d_1" title="death rate decline with income" />
+            <ParameterSlider v-model="b0" :min="0" :max="1" :step="0.1" latex-expression="b" title="birth rate" />
+            <ParameterSlider v-model="d0" :min="0" :max="1" :step="0.1" latex-expression="d" title="base death rate" />
+            <ParameterSlider v-model="d1" :min="0" :max="1" :step="0.1" latex-expression="d_y" title="death rate decline with income" />
           </n-collapse-item>
           
           <n-collapse-item title="Research Dynamics">
@@ -405,7 +405,7 @@ connect("all")
             <ParameterSlider v-model="z" :min="0" :max="10" :step="1" latex-expression="z" title="research productivity" />
             <ParameterSlider v-model="phi" :min="0" :max="1" :step="0.1" latex-expression="\phi" title="research returns to scale" />
             <ParameterSlider v-model="theta" :min="0" :max="1" :step="0.1" latex-expression="\theta" title="research automation" />
-            <ParameterSlider v-model="a" :min="0" :max="1" :step="0.1" latex-expression="a" title="researcher share" />
+            <ParameterSlider v-model="rho" :min="0" :max="1" :step="0.1" latex-expression="\rho" title="researcher share" />
           </n-collapse-item>
           
           <n-collapse-item title="Initial Values">
@@ -422,7 +422,7 @@ connect("all")
             <template #header-extra>
               <FontAwesomeIcon icon="gamepad" />
             </template>
-            <ParameterSlider v-model="T" :min="50" :max="500" :step="50" latex-expression="T" title="time periods" />
+            <ParameterSlider v-model="T" :min="50" :max="500" :step="50" latex-expression="T" title="number of time periods" />
           </n-collapse-item>
 
         </n-collapse>
