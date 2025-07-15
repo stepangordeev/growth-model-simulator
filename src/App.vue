@@ -458,29 +458,151 @@ connect("all")
               <n-h6 prefix="bar">
                 Production Function
               </n-h6>
-                The final output good <vue-latex :expression="'Y_t'" /> is produced using a constant-returns-to-scale Cobb-Douglas production function. Production uses capital <vue-latex :expression="'K_t'" /> and labor <vue-latex :expression="'L_t'" />, with total factor productivity <vue-latex :expression="'A_t'" />.
+                The final output good <vue-latex :expression="'Y_t'" /> is produced using a constant-returns-to-scale Cobb-Douglas production function. Production uses capital <vue-latex :expression="'K_t'" /> and labor <vue-latex :expression="'L_t'" />, with total factor productivity <vue-latex :expression="'A_t'" />:
                 <vue-latex :expression="'Y_t = A_t K_t^\\alpha L_t^{1-\\alpha}'" display-mode />
 
               <n-h6 prefix="bar">
                 Capital Law of Motion
               </n-h6>
-                Capital depreciates at rate <vue-latex :expression="'\\delta'"/>, new investment <vue-latex :expression="'I_t'" /> is added to the existing capital stock.
+                Capital depreciates at rate <vue-latex :expression="'\\delta'"/>, new investment <vue-latex :expression="'I_t'" /> is added to the existing capital stock:
                 <vue-latex :expression="'K_{t+1} = (1 - \\delta) K_t + I_t'" display-mode />
               <n-h6 prefix="bar">
                 Resource Constraint
               </n-h6>
-                Output is used either for consumption <vue-latex :expression="'C_t'" /> or investment <vue-latex :expression="'I_t'" />.
+                Output is used either for consumption <vue-latex :expression="'C_t'" /> or investment <vue-latex :expression="'I_t'" />:
                 <vue-latex :expression="'Y_t = C_t + I_t'" display-mode />
               <n-h6 prefix="bar">
                 Saving Rule
               </n-h6>
-                A constant fraction <vue-latex :expression="'s'" /> of output is saved and invested.
+                A constant fraction <vue-latex :expression="'s'" /> of output is saved and invested:
                 <vue-latex :expression="'I_t = s Y_t'" display-mode />
               <n-h6 prefix="bar">
                 Population Law of Motion
               </n-h6>
                 Population grows at rate <vue-latex :expression="'b'"/>:
                 <vue-latex :expression="'L_{t+1} = (1+b)L_t'" display-mode />
+            </n-card>
+
+            <n-card v-if="model_chosen === 'Malthus'">
+
+              <n-h6 prefix="bar">
+                Production Function
+              </n-h6>
+                The final output good <vue-latex :expression="'Y_t'" /> is produced using a constant-returns-to-scale Cobb-Douglas production function. Production uses land <vue-latex :expression="'X'" /> and labor <vue-latex :expression="'L_t'" />, with total factor productivity <vue-latex :expression="'A_t'" />. Land is fixed at a constant level:
+                <vue-latex :expression="'Y_t = A_t X^\\beta L_t^{1-\\beta}'" display-mode />
+
+              <n-h6 prefix="bar">
+                Population Law of Motion
+              </n-h6>
+                The birth rate is <vue-latex :expression="'b'" />. The base death rate is <vue-latex :expression="'d'" />. Furthermore, the death rate declines in income per capita <vue-latex :expression="'y_t=\\frac{Y_t}{L_t}'" />  at rate <vue-latex :expression="'d_y'" />, e.g. due to better healthcare. Thus, the growth rate of population is <vue-latex :expression="'b - d -  d_y y_t'" />:
+                <vue-latex :expression="'L_{t+1} = (1+b - d - d_y y_t)L_t'" display-mode />
+            </n-card>
+
+            <n-card v-if="model_chosen === 'Romer'">
+
+              <n-h6 prefix="bar">
+                Production Function
+              </n-h6>
+                The final output good <vue-latex :expression="'Y_t'" /> is produced using a linear production function by labor employed in production <vue-latex :expression="'L_{y,t}'" /> with productivity <vue-latex :expression="'A_t'" />:
+                <vue-latex :expression="'Y_t = A_t L_{y,t}'" display-mode />
+              <n-h6 prefix="bar">
+                Idea Production Function
+              </n-h6>
+                New ideas are produced using a linear function by researchers <vue-latex :expression="'L_{a,t}'" /> with research productivity <vue-latex :expression="'z'" />. The production of new ideas is proportional to the existing stock of ideas <vue-latex :expression="'A_t'" />:
+                <vue-latex :expression="'I_{a,t} = z A_t L_{a,t}'" display-mode />
+              <n-h6 prefix="bar">
+                Ideas Law of Motion
+              </n-h6>
+                Ideas accumulate over time through research and development (R&D). Old ideas don't depreciate, and the quantity of new ideas is <vue-latex :expression="'I_{a,t}'" />:
+                <vue-latex :expression="'A_{t+1} = A_t + I_{a,t}'" display-mode />
+              <n-h6 prefix="bar">
+                Labor Resource Constraint
+              </n-h6>
+                Population <vue-latex :expression="'L_t'" /> is split between workers employed in production <vue-latex :expression="'L_{y,t}'" /> and in research <vue-latex :expression="'L_{a,t}'" />:
+                <vue-latex :expression="'L_t = L_{y,t} + L_{a,t}'" display-mode />
+              <n-h6 prefix="bar">
+                Labor Allocation Rule
+              </n-h6>
+                A constant fraction <vue-latex :expression="'\\rho'" /> of workers become researchers:
+                <vue-latex :expression="'L_{a,t} = \\rho L_t'" display-mode />
+            </n-card>
+
+            <n-card v-if="model_chosen === 'Jones'">
+
+              <n-h6 prefix="bar">
+                Production Function
+              </n-h6>
+                The final output good <vue-latex :expression="'Y_t'" /> is produced using a linear production function by labor employed in production <vue-latex :expression="'L_{y,t}'" /> with productivity <vue-latex :expression="'A_t'" />. Returns to ideas are <vue-latex :expression="'\\gamma'" />:
+                <vue-latex :expression="'Y_t = A_t^\\gamma L_{y,t}'" display-mode />
+              <n-h6 prefix="bar">
+                Idea Production Function
+              </n-h6>
+                New ideas are produced using a linear function by researchers <vue-latex :expression="'L_{a,t}'" /> with research productivity <vue-latex :expression="'z'" />. The production of new ideas is <n-text italic>not</n-text> proportional to the existing stock of ideas <vue-latex :expression="'A_t'" />:
+                <vue-latex :expression="'I_{a,t} = z L_{a,t}'" display-mode />
+              <n-h6 prefix="bar">
+                Ideas Law of Motion
+              </n-h6>
+                Ideas accumulate over time through research and development (R&D). Old ideas don't depreciate, and the quantity of new ideas is <vue-latex :expression="'I_{a,t}'" />:
+                <vue-latex :expression="'A_{t+1} = A_t + I_{a,t}'" display-mode />
+              <n-h6 prefix="bar">
+                Labor Resource Constraint
+              </n-h6>
+                Population <vue-latex :expression="'L_t'" /> is split between workers employed in production <vue-latex :expression="'L_{y,t}'" /> and in research <vue-latex :expression="'L_{a,t}'" />:
+                <vue-latex :expression="'L_t = L_{y,t} + L_{a,t}'" display-mode />
+              <n-h6 prefix="bar">
+                Labor Allocation Rule
+              </n-h6>
+                A constant fraction <vue-latex :expression="'\\rho'" /> of workers become researchers:
+                <vue-latex :expression="'L_{a,t} = \\rho L_t'" display-mode />
+            </n-card>
+
+            <n-card v-if="model_chosen === 'General'">
+
+              <n-h6 prefix="bar">
+                Production Function
+              </n-h6>
+                The final output good <vue-latex :expression="'Y_t'" /> is produced using a constant-returns-to-scale Cobb-Douglas production function. Production uses capital <vue-latex :expression="'K_t'" />, land <vue-latex :expression="'X_t'" />, and labor <vue-latex :expression="'L_t'" />, with total factor productivity <vue-latex :expression="'A_t'" />. Land is fixed at a constant level.
+                <vue-latex :expression="'Y_t = A_t^\\gamma K_t^{\\alpha} X^{\\beta} L_t^{1-\\alpha-\\beta}'" display-mode />
+              <n-h6 prefix="bar">
+                Idea Production Function
+              </n-h6>
+                New ideas are produced using a Cobb-Douglas production function. Idea production uses existing ideas <vue-latex :expression="'A_t'" />, capital <vue-latex :expression="'K_{t}'" /> and researchers <vue-latex :expression="'L_{a,t}'" /> with research productivity <vue-latex :expression="'z'" />: 
+                <vue-latex :expression="'I_{a,t} = z A_t^{\\phi} K_t^{\\theta} L_{a,t}^{1-\\theta}'" display-mode />
+              <n-h6 prefix="bar">
+                Ideas Law of Motion
+              </n-h6>
+                Ideas accumulate over time through research and development (R&D). Old ideas don't depreciate, and the quantity of new ideas is <vue-latex :expression="'I_{a,t}'" />:
+                <vue-latex :expression="'A_{t+1} = A_t + I_{a,t}'" display-mode />
+              <n-h6 prefix="bar">
+                Capital Law of Motion
+              </n-h6>
+                Capital depreciates at rate <vue-latex :expression="'\\delta'"/>, new investment <vue-latex :expression="'I_t'" /> is added to the existing capital stock:
+                <vue-latex :expression="'K_{t+1} = (1 - \\delta) K_t + I_t'" display-mode />
+              <n-h6 prefix="bar">
+                Population Law of Motion
+              </n-h6>
+                The birth rate is <vue-latex :expression="'b'" />. The base death rate is <vue-latex :expression="'d'" />. Furthermore, the death rate declines in income per capita <vue-latex :expression="'y_t=\\frac{Y_t}{L_t}'" />  at rate <vue-latex :expression="'d_y'" />, e.g. due to better healthcare. Thus, the growth rate of population is <vue-latex :expression="'b - d -  d_y y_t'" />:
+                <vue-latex :expression="'L_{t+1} = (1+b - d - d_y y_t)L_t'" display-mode />
+              <n-h6 prefix="bar">
+                Resource Constraint
+              </n-h6>
+                Output is used either for consumption <vue-latex :expression="'C_t'" /> or investment <vue-latex :expression="'I_t'" />:
+                <vue-latex :expression="'Y_t = C_t + I_t'" display-mode />
+              <n-h6 prefix="bar">
+                Saving Rule
+              </n-h6>
+                A constant fraction <vue-latex :expression="'s'" /> of output is saved and invested:
+                <vue-latex :expression="'I_t = s Y_t'" display-mode />
+              <n-h6 prefix="bar">
+                Labor Resource Constraint
+              </n-h6>
+                Population <vue-latex :expression="'L_t'" /> is split between workers employed in production <vue-latex :expression="'L_{y,t}'" /> and in research <vue-latex :expression="'L_{a,t}'" />:
+                <vue-latex :expression="'L_t = L_{y,t} + L_{a,t}'" display-mode />
+              <n-h6 prefix="bar">
+                Labor Allocation Rule
+              </n-h6>
+                A constant fraction <vue-latex :expression="'\\rho'" /> of workers become researchers:
+                <vue-latex :expression="'L_{a,t} = \\rho L_t'" display-mode />
             </n-card>
 
           </n-flex>
