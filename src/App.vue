@@ -452,6 +452,36 @@ connect("all")
                 :label="model.label"
               />
             </n-radio-group>
+            
+            <n-card v-if="model_chosen === 'Solow'">
+
+              <n-h6 prefix="bar">
+                Production Function
+              </n-h6>
+                The final output good <vue-latex :expression="'Y_t'" /> is produced using a constant-returns-to-scale Cobb-Douglas production function. Production uses capital <vue-latex :expression="'K_t'" /> and labor <vue-latex :expression="'L_t'" />, with total factor productivity <vue-latex :expression="'A_t'" />.
+                <vue-latex :expression="'Y_t = A_t K_t^\\alpha L_t^{1-\\alpha}'" display-mode />
+
+              <n-h6 prefix="bar">
+                Capital Law of Motion
+              </n-h6>
+                Capital depreciates at rate <vue-latex :expression="'\\delta'"/>, new investment <vue-latex :expression="'I_t'" /> is added to the existing capital stock.
+                <vue-latex :expression="'K_{t+1} = (1 - \\delta) K_t + I_t'" display-mode />
+              <n-h6 prefix="bar">
+                Resource Constraint
+              </n-h6>
+                Output is used either for consumption <vue-latex :expression="'C_t'" /> or investment <vue-latex :expression="'I_t'" />.
+                <vue-latex :expression="'Y_t = C_t + I_t'" display-mode />
+              <n-h6 prefix="bar">
+                Saving Rule
+              </n-h6>
+                A constant fraction <vue-latex :expression="'s'" /> of output is saved and invested.
+                <vue-latex :expression="'I_t = s Y_t'" display-mode />
+              <n-h6 prefix="bar">
+                Population Law of Motion
+              </n-h6>
+                Population grows at rate <vue-latex :expression="'b'"/>:
+                <vue-latex :expression="'L_{t+1} = (1+b)L_t'" display-mode />
+            </n-card>
 
           </n-flex>
         </n-tab-pane>
