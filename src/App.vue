@@ -1,5 +1,5 @@
 <script setup>
-import { defineComponent, ref, computed, h } from "vue";
+import { defineComponent, ref, computed, h, watch } from "vue";
 import { VueLatex } from 'vatex'
 import { use } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
@@ -73,7 +73,7 @@ const z = ref(0);
 const s = ref(0.3);
 const rho = ref(0);
 const X = ref(1);
-const T = ref(100);
+const T = ref(200);
 
 
 // creates marks for naive ui's slider: marks at step intervals, with labels only at min and max, plus current value
@@ -177,23 +177,23 @@ const K_lom = (K, I_y, delta) => {
 
 // Simulation function converted from R
 const simulate = (
-  L_1 = 1,
-  K_1 = 1,
-  A_1 = 1,
-  alpha = 0,
-  beta = 0,
-  gamma = 1,
-  delta = 0,
-  phi = 0,
-  theta = 0,
-  b0 = 0,
-  d0 = 0,
-  d1 = 0,
-  z = 0,
-  s = 0,
-  rho = 0,
-  X = 1,
-  T = 20
+  L_1,
+  K_1,
+  A_1,
+  alpha,
+  beta,
+  gamma,
+  delta,
+  phi,
+  theta,
+  b0,
+  d0,
+  d1,
+  z,
+  s,
+  rho,
+  X,
+  T
 ) => {
   // Initialize arrays for all variables
   const period = Array.from({ length: T }, (_, i) => i + 1);
@@ -325,6 +325,123 @@ const models = [
   }
 ]
 
+// Parameter presets for each model
+const modelPresets = {
+  Solow: {
+    L_1: 1,
+    K_1: 1,
+    A_1: 1,
+    alpha: 0.3,
+    beta: 0,
+    gamma: 1,
+    delta: 0.1,
+    phi: 0,
+    theta: 0,
+    b0: 0,
+    d0: 0,
+    d1: 0,
+    z: 0,
+    s: 0.3,
+    rho: 0,
+    X: 1
+  },
+  Malthus: {
+    L_1: 1,
+    K_1: 1,
+    A_1: 1,
+    alpha: 0,
+    beta: 0.3,
+    gamma: 1,
+    delta: 0,
+    phi: 0,
+    theta: 0,
+    b0: 0.01,
+    d0: 0.02,
+    d1: 0.01,
+    z: 0,
+    s: 0,
+    rho: 0,
+    X: 1
+  },
+  Romer: {
+    L_1: 1,
+    K_1: 1,
+    A_1: 1,
+    alpha: 0.3,
+    beta: 0,
+    gamma: 1,
+    delta: 0.1,
+    phi: 1,
+    theta: 0,
+    b0: 0,
+    d0: 0,
+    d1: 0,
+    z: 0.1,
+    s: 0.3,
+    rho: 0.1,
+    X: 1
+  },
+  Jones: {
+    L_1: 1,
+    K_1: 1,
+    A_1: 1,
+    alpha: 0.3,
+    beta: 0,
+    gamma: 0.5,
+    delta: 0.1,
+    phi: 0,
+    theta: 0,
+    b0: 0.01,
+    d0: 0,
+    d1: 0,
+    z: 0.1,
+    s: 0.3,
+    rho: 0.1,
+    X: 1
+  },
+  General: {
+    L_1: 1,
+    K_1: 1,
+    A_1: 1,
+    alpha: 0.3,
+    beta: 0,
+    gamma: 1,
+    delta: 0.1,
+    phi: 0,
+    theta: 0,
+    b0: 0,
+    d0: 0,
+    d1: 0,
+    z: 0,
+    s: 0.3,
+    rho: 0,
+    X: 1
+  }
+};
+
+// Watch for model changes and apply presets
+watch(model_chosen, (newModel) => {
+  const preset = modelPresets[newModel];
+  if (preset) {
+    L_1.value = preset.L_1;
+    K_1.value = preset.K_1;
+    A_1.value = preset.A_1;
+    alpha.value = preset.alpha;
+    beta.value = preset.beta;
+    gamma.value = preset.gamma;
+    delta.value = preset.delta;
+    phi.value = preset.phi;
+    theta.value = preset.theta;
+    b0.value = preset.b0;
+    d0.value = preset.d0;
+    d1.value = preset.d1;
+    z.value = preset.z;
+    s.value = preset.s;
+    rho.value = preset.rho;
+    X.value = preset.X;
+  }
+}, { immediate: true }); // Apply preset immediately when component mounts
+
 const x_axis_interval = (index, value) => {
   if (index === 0) return true; // Show period 1
   // For remaining periods, show labels at nice intervals
@@ -393,16 +510,16 @@ connect("all")
             <template #header-extra>
               <FontAwesomeIcon icon="baby-carriage" />
             </template>
-            <ParameterSlider v-model="b0" :min="0" :max="1" :step="0.1" latex-expression="b" title="birth rate" />
-            <ParameterSlider v-model="d0" :min="0" :max="1" :step="0.1" latex-expression="d" title="base death rate" />
-            <ParameterSlider v-model="d1" :min="0" :max="1" :step="0.1" latex-expression="d_y" title="death rate decline with income" />
+            <ParameterSlider v-model="b0" :min="0" :max="0.1" :step="0.01" latex-expression="b" title="birth rate" />
+            <ParameterSlider v-model="d0" :min="0" :max="0.1" :step="0.01" latex-expression="d" title="base death rate" />
+            <ParameterSlider v-model="d1" :min="0" :max="0.1" :step="0.01" latex-expression="d_y" title="death rate decline with income" />
           </n-collapse-item>
           
           <n-collapse-item title="Research Dynamics">
             <template #header-extra>
               <FontAwesomeIcon icon="flask" />
             </template>
-            <ParameterSlider v-model="z" :min="0" :max="10" :step="1" latex-expression="z" title="research productivity" />
+            <ParameterSlider v-model="z" :min="0" :max="1" :step="0.1" latex-expression="z" title="research productivity" />
             <ParameterSlider v-model="phi" :min="0" :max="1" :step="0.1" latex-expression="\phi" title="research returns to scale" />
             <ParameterSlider v-model="theta" :min="0" :max="1" :step="0.1" latex-expression="\theta" title="research automation" />
             <ParameterSlider v-model="rho" :min="0" :max="1" :step="0.1" latex-expression="\rho" title="researcher share" />
@@ -442,6 +559,7 @@ connect("all")
 
             <n-card>
               This dashboard simulates several models of economic growth that are commonly found in undergraduate macroeconomics and growth courses.
+              Choose the model to simulate using the selector below. Simulation results can be explored using the tabs above. Model parameters can be adjusted using the sliders in the sidebar. When the model is switched, parameters are reset to default values for the chosen model.
             </n-card>
             
             <n-radio-group v-model:value="model_chosen" name="radiobuttongroup1">
@@ -494,7 +612,7 @@ connect("all")
               <n-h6 prefix="bar">
                 Population Law of Motion
               </n-h6>
-                The birth rate is <vue-latex :expression="'b'" />. The base death rate is <vue-latex :expression="'d'" />. Furthermore, the death rate declines in income per capita <vue-latex :expression="'y_t=\\frac{Y_t}{L_t}'" />  at rate <vue-latex :expression="'d_y'" />, e.g. due to better healthcare. Thus, the growth rate of population is <vue-latex :expression="'b - d -  d_y y_t'" />:
+                The birth rate is <vue-latex :expression="'b'" />. The base death rate is <vue-latex :expression="'d'" />. Furthermore, the death rate declines in income per capita <vue-latex :expression="'y_t=\\frac{Y_t}{L_t}'" />  at rate <vue-latex :expression="'d_y'" />(e.g. due to better healthcare). Thus, the growth rate of population is <vue-latex :expression="'b - d -  d_y y_t'" />, resulting in the following law of motion:
                 <vue-latex :expression="'L_{t+1} = (1+b - d - d_y y_t)L_t'" display-mode />
             </n-card>
 
@@ -554,6 +672,11 @@ connect("all")
               </n-h6>
                 A constant fraction <vue-latex :expression="'\\rho'" /> of workers become researchers:
                 <vue-latex :expression="'L_{a,t} = \\rho L_t'" display-mode />
+              <n-h6 prefix="bar">
+                Population Law of Motion
+              </n-h6>
+                Population grows at rate <vue-latex :expression="'b'"/>:
+                <vue-latex :expression="'L_{t+1} = (1+b)L_t'" display-mode />
             </n-card>
 
             <n-card v-if="model_chosen === 'General'">
