@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, inject } from 'vue'
 import { VueLatex } from 'vatex'
 
 // Define props
@@ -27,7 +27,21 @@ const props = defineProps({
   title: {
     type: String,
     required: true
+  },
+  parameterName: {
+    type: String,
+    required: true
   }
+})
+
+// Inject visibility function and model_chosen from parent
+const isParameterVisible = inject('isParameterVisible')
+const model_chosen = inject('model_chosen')
+
+// Check if this parameter should be visible
+const isVisible = computed(() => {
+  if (!isParameterVisible || !model_chosen) return true
+  return isParameterVisible(props.parameterName)
 })
 
 // Define emits for v-model
@@ -89,6 +103,7 @@ function createLabeledMarks(min, max, step, currentValue = null) {
 </script>
 
 <template>
+  <div v-if="isVisible">
     <n-tooltip :disabled="false">
       <template #trigger>
         <n-slider 
@@ -108,6 +123,7 @@ function createLabeledMarks(min, max, step, currentValue = null) {
       </template>
       {{ props.title }}
     </n-tooltip>
+  </div>
 </template>
 
 <style scoped>

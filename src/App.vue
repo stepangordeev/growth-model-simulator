@@ -1,5 +1,5 @@
 <script setup>
-import { defineComponent, ref, computed, h, watch } from "vue";
+import { defineComponent, ref, computed, h, watch, provide } from "vue";
 import { VueLatex } from 'vatex'
 import { use } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
@@ -419,6 +419,38 @@ const modelPresets = {
   }
 };
 
+// Define which models should hide each parameter (keep them at default values)
+const parameterVisibility = {
+  alpha: { hiddenInModels: ['Malthus'] }, // Capital share not used in Malthus
+  beta: { hiddenInModels: ['Solow', 'Romer', 'Jones'] }, // Land share only used in Malthus and General
+  gamma: { hiddenInModels: ['Solow', 'Malthus', 'Romer'] }, // TFP returns to scale only used in Jones and General
+  delta: { hiddenInModels: ['Malthus'] }, // Depreciation only used in capital models
+  phi: { hiddenInModels: ['Solow', 'Malthus', 'Romer', 'Jones'] }, 
+  theta: { hiddenInModels: ['Solow', 'Malthus', 'Romer', 'Jones'] }, // Research automation only used in General
+  b0: { hiddenInModels: ['Solow', 'Romer'] }, // Birth rate only used in Malthus, Jones, and General
+  d0: { hiddenInModels: ['Solow', 'Romer', 'Jones'] }, // Base death rate only used in Malthus and General
+  d1: { hiddenInModels: ['Solow', 'Romer', 'Jones'] }, // Death rate decline only used in Malthus and General
+  z: { hiddenInModels: ['Solow', 'Malthus'] }, // Research productivity only used in Romer, Jones, and General
+  s: { hiddenInModels: ['Malthus'] }, // Savings rate only used in capital models
+  rho: { hiddenInModels: ['Solow', 'Malthus'] }, // Researcher share only used in Romer, Jones, and General
+  X: { hiddenInModels: ['Solow', 'Romer', 'Jones'] }, 
+  L_1: { hiddenInModels: [] }, // Initial population used in all models
+  K_1: { hiddenInModels: ['Malthus'] }, // Initial capital used in all models
+  A_1: { hiddenInModels: [] }, // Initial TFP used in all models
+  T: { hiddenInModels: [] } // Simulation periods used in all models
+};
+
+// Helper function to check if a parameter should be visible
+const isParameterVisible = (parameterName) => {
+  const visibility = parameterVisibility[parameterName];
+  if (!visibility) return true;
+  return !visibility.hiddenInModels.includes(model_chosen.value);
+};
+
+// Provide functions and reactive data to child components
+provide('isParameterVisible', isParameterVisible);
+provide('model_chosen', model_chosen);
+
 // Watch for model changes and apply presets
 watch(model_chosen, (newModel) => {
   const preset = modelPresets[newModel];
@@ -487,59 +519,59 @@ connect("all")
 
         <n-h3 style="text-align: center;">Parameters</n-h3>
 
-        <n-collapse>
+        <n-collapse :default-expanded-names="['production', 'capital', 'population', 'research', 'initial', 'simulation']">
 
-          <n-collapse-item title="Production Function">
+          <n-collapse-item name="production" title="Production Function">
             <template #header-extra>
               <FontAwesomeIcon icon="hammer" />
             </template>
-            <ParameterSlider v-model="alpha" :min="0" :max="1" :step="0.1" latex-expression="\alpha" title="capital share" />
-            <ParameterSlider v-model="beta" :min="0" :max="1" :step="0.1" latex-expression="\beta" title="land share" />
-            <ParameterSlider v-model="gamma" :min="0" :max="1" :step="0.1" latex-expression="\gamma" title="TFP returns to scale" />
+            <ParameterSlider v-model="alpha" parameter-name="alpha" :min="0" :max="1" :step="0.1" latex-expression="\alpha" title="capital share" />
+            <ParameterSlider v-model="beta" parameter-name="beta" :min="0" :max="1" :step="0.1" latex-expression="\beta" title="land share" />
+            <ParameterSlider v-model="gamma" parameter-name="gamma" :min="0" :max="1" :step="0.1" latex-expression="\gamma" title="TFP returns to scale" />
           </n-collapse-item>
           
-          <n-collapse-item title="Capital Dynamics">
+          <n-collapse-item name="capital" title="Capital Dynamics">
             <template #header-extra>
               <FontAwesomeIcon icon="industry" />
             </template>
-            <ParameterSlider v-model="delta" :min="0" :max="1" :step="0.1" latex-expression="\delta" title="depreciation rate" />
-            <ParameterSlider v-model="s" :min="0" :max="1" :step="0.1" latex-expression="s" title="savings rate" />
+            <ParameterSlider v-model="delta" parameter-name="delta" :min="0" :max="1" :step="0.1" latex-expression="\delta" title="depreciation rate" />
+            <ParameterSlider v-model="s" parameter-name="s" :min="0" :max="1" :step="0.1" latex-expression="s" title="savings rate" />
           </n-collapse-item>
           
-          <n-collapse-item title="Population Dynamics">
+          <n-collapse-item name="population" title="Population Dynamics">
             <template #header-extra>
               <FontAwesomeIcon icon="baby-carriage" />
             </template>
-            <ParameterSlider v-model="b0" :min="0" :max="0.1" :step="0.01" latex-expression="b" title="birth rate" />
-            <ParameterSlider v-model="d0" :min="0" :max="0.1" :step="0.01" latex-expression="d" title="base death rate" />
-            <ParameterSlider v-model="d1" :min="0" :max="0.1" :step="0.01" latex-expression="d_y" title="death rate decline with income" />
+            <ParameterSlider v-model="b0" parameter-name="b0" :min="0" :max="0.1" :step="0.01" latex-expression="b" title="birth rate" />
+            <ParameterSlider v-model="d0" parameter-name="d0" :min="0" :max="0.1" :step="0.01" latex-expression="d" title="base death rate" />
+            <ParameterSlider v-model="d1" parameter-name="d1" :min="0" :max="0.1" :step="0.01" latex-expression="d_y" title="death rate decline with income" />
           </n-collapse-item>
           
-          <n-collapse-item title="Research Dynamics">
+          <n-collapse-item name="research" title="Research Dynamics">
             <template #header-extra>
               <FontAwesomeIcon icon="flask" />
             </template>
-            <ParameterSlider v-model="z" :min="0" :max="1" :step="0.1" latex-expression="z" title="research productivity" />
-            <ParameterSlider v-model="phi" :min="0" :max="1" :step="0.1" latex-expression="\phi" title="research returns to scale" />
-            <ParameterSlider v-model="theta" :min="0" :max="1" :step="0.1" latex-expression="\theta" title="research automation" />
-            <ParameterSlider v-model="rho" :min="0" :max="1" :step="0.1" latex-expression="\rho" title="researcher share" />
+            <ParameterSlider v-model="z" parameter-name="z" :min="0" :max="1" :step="0.1" latex-expression="z" title="research productivity" />
+            <ParameterSlider v-model="phi" parameter-name="phi" :min="0" :max="1" :step="0.1" latex-expression="\phi" title="research returns to scale" />
+            <ParameterSlider v-model="theta" parameter-name="theta" :min="0" :max="1" :step="0.1" latex-expression="\theta" title="research automation" />
+            <ParameterSlider v-model="rho" parameter-name="rho" :min="0" :max="1" :step="0.1" latex-expression="\rho" title="researcher share" />
           </n-collapse-item>
           
-          <n-collapse-item title="Initial Values">
+          <n-collapse-item name="initial" title="Initial Values">
             <template #header-extra>
               <FontAwesomeIcon icon="rocket" />
             </template>
-            <ParameterSlider v-model="K_1" :min="1" :max="10" :step="1" latex-expression="K_1" title="initial capital" />
-            <ParameterSlider v-model="L_1" :min="1" :max="10" :step="1" latex-expression="L_1" title="initial population" />
-            <ParameterSlider v-model="A_1" :min="1" :max="10" :step="1" latex-expression="A_1" title="initial TFP" />
-            <ParameterSlider v-model="X" :min="1" :max="10" :step="1" latex-expression="X" title="permanent land" />
+            <ParameterSlider v-model="K_1" parameter-name="K_1" :min="1" :max="10" :step="1" latex-expression="K_1" title="initial capital" />
+            <ParameterSlider v-model="L_1" parameter-name="L_1" :min="1" :max="10" :step="1" latex-expression="L_1" title="initial population" />
+            <ParameterSlider v-model="A_1" parameter-name="A_1" :min="1" :max="10" :step="1" latex-expression="A_1" title="initial TFP" />
+            <ParameterSlider v-model="X" parameter-name="X" :min="1" :max="10" :step="1" latex-expression="X" title="permanent land" />
           </n-collapse-item>
 
-          <n-collapse-item title="Simulation Settings">
+          <n-collapse-item name="simulation" title="Simulation Settings">
             <template #header-extra>
               <FontAwesomeIcon icon="gamepad" />
             </template>
-            <ParameterSlider v-model="T" :min="50" :max="500" :step="50" latex-expression="T" title="number of time periods" />
+            <ParameterSlider v-model="T" parameter-name="T" :min="50" :max="500" :step="50" latex-expression="T" title="number of time periods" />
           </n-collapse-item>
 
         </n-collapse>
