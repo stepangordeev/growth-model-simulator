@@ -440,6 +440,32 @@ const parameterVisibility = {
   T: { hiddenInModels: [] } // Simulation periods used in all models
 };
 
+// Define which models should hide each variable/graph
+const variableVisibility = {
+  // Aggregates
+  Y: { hiddenInModels: [] }, // Output always relevant
+  A: { hiddenInModels: [] }, // TFP always relevant 
+  K: { hiddenInModels: ['Malthus'] }, // Capital not used in Malthus
+  L: { hiddenInModels: [] }, // Labor always relevant
+  C: { hiddenInModels: [] },
+  
+  // Per capita
+  y: { hiddenInModels: [] }, // Output per capita always relevant
+  k: { hiddenInModels: ['Malthus'] }, // Capital per capita not used in Malthus
+  x: { hiddenInModels: ['Solow', 'Romer', 'Jones'] }, // Land per capita only in Malthus and General
+  c: { hiddenInModels: [] }, 
+  
+  // Growth rates
+  g_Y: { hiddenInModels: [] }, // Output growth always relevant
+  g_A: { hiddenInModels: ['Solow', 'Malthus'] }, // TFP growth only in research models
+  g_K: { hiddenInModels: ['Malthus'] }, // Capital growth not used in Malthus
+  g_L: { hiddenInModels: ['Solow', 'Romer'] }, // Population growth only in Malthus, Jones, General
+  g_C: { hiddenInModels: [] }, 
+  g_y: { hiddenInModels: [] }, // Output per capita growth always relevant
+  g_k: { hiddenInModels: ['Malthus'] }, // Capital per capita growth not used in Malthus
+  g_c: { hiddenInModels: [] }, 
+};
+
 // Helper function to check if a parameter should be visible
 const isParameterVisible = (parameterName) => {
   const visibility = parameterVisibility[parameterName];
@@ -447,8 +473,16 @@ const isParameterVisible = (parameterName) => {
   return !visibility.hiddenInModels.includes(model_chosen.value);
 };
 
+// Helper function to check if a variable should be visible
+const isVariableVisible = (variableName) => {
+  const visibility = variableVisibility[variableName];
+  if (!visibility) return true;
+  return !visibility.hiddenInModels.includes(model_chosen.value);
+};
+
 // Provide functions and reactive data to child components
 provide('isParameterVisible', isParameterVisible);
+provide('isVariableVisible', isVariableVisible);
 provide('model_chosen', model_chosen);
 
 // Watch for model changes and apply presets
@@ -770,19 +804,19 @@ connect("all")
           </template>
           <n-card :bordered="false" size="small">
           <n-grid cols="2 s:1 m:1 l:2 xl:3 2xl:5" responsive="screen" :x-gap="16" :y-gap="16">
-            <n-grid-item>
+            <n-grid-item v-if="isVariableVisible('Y')">
               <VariablePlot variable="Y" label="Output" latex-expression="Y" :data-table="data_table" />
             </n-grid-item>
-            <n-grid-item>
+            <n-grid-item v-if="isVariableVisible('A')">
               <VariablePlot variable="A" label="TFP" latex-expression="A" :data-table="data_table" />
             </n-grid-item>
-            <n-grid-item>
+            <n-grid-item v-if="isVariableVisible('K')">
               <VariablePlot variable="K" label="Capital" latex-expression="K" :data-table="data_table" />
             </n-grid-item>
-            <n-grid-item>
+            <n-grid-item v-if="isVariableVisible('L')">
               <VariablePlot variable="L" label="Labor" latex-expression="L" :data-table="data_table" />
             </n-grid-item>
-            <n-grid-item>
+            <n-grid-item v-if="isVariableVisible('C')">
               <VariablePlot variable="C" label="Consumption" latex-expression="C" :data-table="data_table" />
             </n-grid-item>
           </n-grid>
@@ -796,16 +830,16 @@ connect("all")
           </template>
           <n-card :bordered="false" size="small">
           <n-grid cols="2 s:1 m:1 l:2 xl:3 2xl:5" responsive="screen" :x-gap="16" :y-gap="16">
-            <n-grid-item>
+            <n-grid-item v-if="isVariableVisible('y')">
               <VariablePlot variable="y" label="Output per Capita" latex-expression="y" :data-table="data_table" />
             </n-grid-item>
-            <n-grid-item>
+            <n-grid-item v-if="isVariableVisible('k')">
               <VariablePlot variable="k" label="Capital per Capita" latex-expression="k" :data-table="data_table" />
             </n-grid-item>
-            <n-grid-item>
+            <n-grid-item v-if="isVariableVisible('x')">
               <VariablePlot variable="x" label="Land per Capita" latex-expression="x" :data-table="data_table" />
             </n-grid-item>
-            <n-grid-item>
+            <n-grid-item v-if="isVariableVisible('c')">
               <VariablePlot variable="c" label="Consumption per Capita" latex-expression="c" :data-table="data_table" />
             </n-grid-item>
           </n-grid>
@@ -820,28 +854,28 @@ connect("all")
           </template>
           <n-card :bordered="false" size="small">
           <n-grid cols="2 s:1 m:1 l:2 xl:3 2xl:5" responsive="screen" :x-gap="16" :y-gap="16">
-            <n-grid-item>
+            <n-grid-item v-if="isVariableVisible('g_Y')">
               <VariablePlot variable="g_Y" label="Growth Rate of Output" latex-expression="g_Y" :data-table="data_table" />
             </n-grid-item>
-            <n-grid-item>
+            <n-grid-item v-if="isVariableVisible('g_A')">
               <VariablePlot variable="g_A" label="Growth Rate of TFP" latex-expression="g_A" :data-table="data_table" />
             </n-grid-item>
-            <n-grid-item>
+            <n-grid-item v-if="isVariableVisible('g_K')">
               <VariablePlot variable="g_K" label="Growth Rate of Capital" latex-expression="g_K" :data-table="data_table" />
             </n-grid-item>
-            <n-grid-item>
+            <n-grid-item v-if="isVariableVisible('g_L')">
               <VariablePlot variable="g_L" label="Growth Rate of Labor" latex-expression="g_L" :data-table="data_table" />
             </n-grid-item>
-            <n-grid-item>
+            <n-grid-item v-if="isVariableVisible('g_C')">
               <VariablePlot variable="g_C" label="Growth Rate of Consumption" latex-expression="g_C" :data-table="data_table" />
             </n-grid-item>
-            <n-grid-item>
+            <n-grid-item v-if="isVariableVisible('g_y')">
               <VariablePlot variable="g_y" label="Growth Rate of Output per Capita" latex-expression="g_y" :data-table="data_table" />
             </n-grid-item>
-            <n-grid-item>
+            <n-grid-item v-if="isVariableVisible('g_k')">
               <VariablePlot variable="g_k" label="Growth Rate of Capital per Capita" latex-expression="g_k" :data-table="data_table" />
             </n-grid-item>
-            <n-grid-item>
+            <n-grid-item v-if="isVariableVisible('g_c')">
               <VariablePlot variable="g_c" label="Growth Rate of Consumption per Capita" latex-expression="g_c" :data-table="data_table" />
             </n-grid-item>
           </n-grid>
