@@ -320,6 +320,10 @@ const models = [
     label: "Jones"
   },
   {
+    value: "Automation",
+    label: "AI"
+  },
+  {
     value: "General",
     label: "General"
   }
@@ -399,6 +403,24 @@ const modelPresets = {
     rho: 0.1,
     X: 1
   },
+  Automation: {
+    L_1: 1,
+    K_1: 1,
+    A_1: 1,
+    alpha: 0.3,
+    beta: 0,
+    gamma: 0.5,
+    delta: 0.1,
+    phi: 0.5,
+    theta: 0.3,
+    b0: 0.01,
+    d0: 0,
+    d1: 0,
+    z: 0.1,
+    s: 0.3,
+    rho: 0.1,
+    X: 1
+  },
   General: {
     L_1: 1,
     K_1: 1,
@@ -421,21 +443,21 @@ const modelPresets = {
 
 // Define which models should hide each parameter (keep them at default values)
 const parameterVisibility = {
-  alpha: { hiddenInModels: ['Malthus'] }, // Capital share not used in Malthus
-  beta: { hiddenInModels: ['Solow', 'Romer', 'Jones'] }, // Land share only used in Malthus and General
+  alpha: { hiddenInModels: ['Malthus', 'Romer', 'Jones', 'Automation'] }, // Capital share not used in Malthus
+  beta: { hiddenInModels: ['Solow', 'Romer', 'Jones', 'Automation'] }, // Land share only used in Malthus and General
   gamma: { hiddenInModels: ['Solow', 'Malthus', 'Romer'] }, // TFP returns to scale only used in Jones and General
-  delta: { hiddenInModels: ['Malthus'] }, // Depreciation only used in capital models
+  delta: { hiddenInModels: ['Malthus', 'Romer', 'Jones'] }, // Depreciation only used in capital models
   phi: { hiddenInModels: ['Solow', 'Malthus', 'Romer', 'Jones'] }, 
   theta: { hiddenInModels: ['Solow', 'Malthus', 'Romer', 'Jones'] }, // Research automation only used in General
   b0: { hiddenInModels: ['Solow', 'Romer'] }, // Birth rate only used in Malthus, Jones, and General
-  d0: { hiddenInModels: ['Solow', 'Romer', 'Jones'] }, // Base death rate only used in Malthus and General
-  d1: { hiddenInModels: ['Solow', 'Romer', 'Jones'] }, // Death rate decline only used in Malthus and General
+  d0: { hiddenInModels: ['Solow', 'Romer', 'Jones', 'Automation'] }, // Base death rate only used in Malthus and General
+  d1: { hiddenInModels: ['Solow', 'Romer', 'Jones', 'Automation'] }, // Death rate decline only used in Malthus and General
   z: { hiddenInModels: ['Solow', 'Malthus'] }, // Research productivity only used in Romer, Jones, and General
-  s: { hiddenInModels: ['Malthus'] }, // Savings rate only used in capital models
+  s: { hiddenInModels: ['Malthus', 'Romer', 'Jones'] }, // Savings rate only used in capital models
   rho: { hiddenInModels: ['Solow', 'Malthus'] }, // Researcher share only used in Romer, Jones, and General
-  X: { hiddenInModels: ['Solow', 'Romer', 'Jones'] }, 
+  X: { hiddenInModels: ['Solow', 'Romer', 'Jones', 'Automation'] }, // Research productivity only used in Romer, Jones, and General
   L_1: { hiddenInModels: [] }, // Initial population used in all models
-  K_1: { hiddenInModels: ['Malthus'] }, // Initial capital used in all models
+  K_1: { hiddenInModels: ['Malthus', 'Romer', 'Jones'] }, // Initial capital used in all models
   A_1: { hiddenInModels: [] }, // Initial TFP used in all models
   T: { hiddenInModels: [] } // Simulation periods used in all models
 };
@@ -445,24 +467,24 @@ const variableVisibility = {
   // Aggregates
   Y: { hiddenInModels: [] }, // Output always relevant
   A: { hiddenInModels: [] }, // TFP always relevant 
-  K: { hiddenInModels: ['Malthus'] }, // Capital not used in Malthus
+  K: { hiddenInModels: ['Malthus', 'Romer', 'Jones'] }, // Capital not used in Malthus
   L: { hiddenInModels: [] }, // Labor always relevant
   C: { hiddenInModels: [] },
   
   // Per capita
   y: { hiddenInModels: [] }, // Output per capita always relevant
-  k: { hiddenInModels: ['Malthus'] }, // Capital per capita not used in Malthus
-  x: { hiddenInModels: ['Solow', 'Romer', 'Jones'] }, // Land per capita only in Malthus and General
+  k: { hiddenInModels: ['Malthus', 'Romer', 'Jones'] }, // Capital per capita not used in Malthus
+  x: { hiddenInModels: ['Solow', 'Romer', 'Jones', 'Automation'] }, // Land per capita only in Malthus and General
   c: { hiddenInModels: [] }, 
   
   // Growth rates
   g_Y: { hiddenInModels: [] }, // Output growth always relevant
   g_A: { hiddenInModels: ['Solow', 'Malthus'] }, // TFP growth only in research models
-  g_K: { hiddenInModels: ['Malthus'] }, // Capital growth not used in Malthus
+  g_K: { hiddenInModels: ['Malthus', 'Romer', 'Jones'] }, // Capital growth not used in Malthus
   g_L: { hiddenInModels: ['Solow', 'Romer'] }, // Population growth only in Malthus, Jones, General
   g_C: { hiddenInModels: [] }, 
   g_y: { hiddenInModels: [] }, // Output per capita growth always relevant
-  g_k: { hiddenInModels: ['Malthus'] }, // Capital per capita growth not used in Malthus
+  g_k: { hiddenInModels: ['Malthus', 'Romer', 'Jones'] }, // Capital per capita growth not used in Malthus
   g_c: { hiddenInModels: [] }, 
 };
 
@@ -745,6 +767,52 @@ connect("all")
                 <vue-latex :expression="'L_{t+1} = (1+b)L_t'" display-mode />
             </n-card>
 
+            <n-card v-if="model_chosen === 'Automation'">
+
+              In this model, ideas are produced by researches and artificial intelligence (represented with capital) rather than by researchers alone. If research is sufficiently automated (capital share in idea production <vue-latex :expression="'\\theta'" /> is high enough), then the model generates a singularity: infinite TFP and GDP are reached within finite time. The simulation breaks at this point. The degree of automation needed for this to happen is determined by the returns to ideas in final good production (<vue-latex :expression="'\\gamma'" />) and in idea production (<vue-latex :expression="'\\phi'" />).
+
+              <n-h6 prefix="bar">
+                Production Function
+              </n-h6>
+                The final output good <vue-latex :expression="'Y_t'" /> is produced using a linear production function by labor employed in production <vue-latex :expression="'L_{y,t}'" /> with productivity <vue-latex :expression="'A_t'" />. Returns to ideas are <vue-latex :expression="'\\gamma'" />:
+                <vue-latex :expression="'Y_t = A_t^\\gamma L_{y,t}'" display-mode />
+              <n-h6 prefix="bar">
+                Idea Production Function
+              </n-h6>
+                New ideas are produced using a constant-returns-to-scale Cobb-Douglas production function. Idea production uses existing ideas <vue-latex :expression="'A_t'" />, capital <vue-latex :expression="'K_{t}'" /> and researchers <vue-latex :expression="'L_{a,t}'" />. Returns to existing ideas are <vue-latex :expression="'\\phi'" />:
+                <vue-latex :expression="'I_{a,t} = z A_t^{\\phi} K_t^{\\theta} L_{a,t}^{1-\\theta}'" display-mode />
+              <n-h6 prefix="bar">
+                Ideas Law of Motion
+              </n-h6>
+                Ideas accumulate over time through research and development (R&D). Old ideas don't depreciate, and the quantity of new ideas is <vue-latex :expression="'I_{a,t}'" />:
+                <vue-latex :expression="'A_{t+1} = A_t + I_{a,t}'" display-mode />
+              <n-h6 prefix="bar">
+                Capital Law of Motion
+              </n-h6>
+                Capital depreciates at rate <vue-latex :expression="'\\delta'"/>, new investment <vue-latex :expression="'I_t'" /> is added to the existing capital stock:
+                <vue-latex :expression="'K_{t+1} = (1 - \\delta) K_t + I_t'" display-mode />
+              <n-h6 prefix="bar">
+                Saving Rule
+              </n-h6>
+                A constant fraction <vue-latex :expression="'s'" /> of output is saved and invested:
+                <vue-latex :expression="'I_t = s Y_t'" display-mode />
+              <n-h6 prefix="bar">
+                Labor Resource Constraint
+              </n-h6>
+                Population <vue-latex :expression="'L_t'" /> is split between workers employed in production <vue-latex :expression="'L_{y,t}'" /> and in research <vue-latex :expression="'L_{a,t}'" />:
+                <vue-latex :expression="'L_t = L_{y,t} + L_{a,t}'" display-mode />
+              <n-h6 prefix="bar">
+                Labor Allocation Rule
+              </n-h6>
+                A constant fraction <vue-latex :expression="'\\rho'" /> of workers become researchers:
+                <vue-latex :expression="'L_{a,t} = \\rho L_t'" display-mode />
+              <n-h6 prefix="bar">
+                Population Law of Motion
+              </n-h6>
+                Population grows at rate <vue-latex :expression="'b'"/>:
+                <vue-latex :expression="'L_{t+1} = (1+b)L_t'" display-mode />
+            </n-card>
+
             <n-card v-if="model_chosen === 'General'">
 
               <n-h6 prefix="bar">
@@ -755,7 +823,7 @@ connect("all")
               <n-h6 prefix="bar">
                 Idea Production Function
               </n-h6>
-                New ideas are produced using a Cobb-Douglas production function. Idea production uses existing ideas <vue-latex :expression="'A_t'" />, capital <vue-latex :expression="'K_{t}'" /> and researchers <vue-latex :expression="'L_{a,t}'" /> with research productivity <vue-latex :expression="'z'" />: 
+                New ideas are produced using a constant-returns-to-scale Cobb-Douglas production function. Idea production uses existing ideas <vue-latex :expression="'A_t'" />, capital <vue-latex :expression="'K_{t}'" /> and researchers <vue-latex :expression="'L_{a,t}'" /> with research productivity <vue-latex :expression="'z'" />. Returns to existing ideas are <vue-latex :expression="'\\phi'" />:
                 <vue-latex :expression="'I_{a,t} = z A_t^{\\phi} K_t^{\\theta} L_{a,t}^{1-\\theta}'" display-mode />
               <n-h6 prefix="bar">
                 Ideas Law of Motion
