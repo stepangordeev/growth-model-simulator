@@ -110,6 +110,7 @@ function createLabeledMarks(min, max, step, currentValue = null) {
           :value="props.modelValue"
           @update:value="emit('update:modelValue', $event)"
           :marks="marks" 
+          :min="props.min"
           :max="props.max" 
           step="mark" 
           :tooltip="false"

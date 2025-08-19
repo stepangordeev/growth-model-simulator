@@ -67,6 +67,7 @@ const delta = ref(0.1);
 const phi = ref(0);
 const theta = ref(0);
 const b0 = ref(0);
+const b1 = ref(0);
 const d0 = ref(0);
 const d1 = ref(0);
 const z = ref(0);
@@ -167,8 +168,8 @@ const A_lom = (A, I_a) => {
   return A + I_a;
 };
 
-const L_lom = (L_prev, b0, d0, d1, y) => {
-  return L_prev * (1 + b0 - d0 + d1 * y);
+const L_lom = (L_prev, b0, b1, d0, d1, y) => {
+  return L_prev * (1 + b0 + b1*y - d0 - d1 * y);
 };
 
 const K_lom = (K, I_y, delta) => {
@@ -187,6 +188,7 @@ const simulate = (
   phi,
   theta,
   b0,
+  b1,
   d0,
   d1,
   z,
@@ -233,7 +235,7 @@ const simulate = (
   // Simulate forward
   for (let t = 0; t < T - 1; t++) {
     A_arr[t + 1] = A_lom(A_arr[t], I_a_arr[t]);
-    L_arr[t + 1] = L_lom(L_arr[t], b0, d0, d1, y_arr[t]);
+    L_arr[t + 1] = L_lom(L_arr[t], b0, b1, d0, d1, y_arr[t]);
     K_arr[t + 1] = K_lom(K_arr[t], I_y_arr[t], delta);
     Y_arr[t + 1] = Y(A_arr[t + 1], K_arr[t + 1], X, L_arr[t + 1] * (1 - rho), gamma, alpha, beta);
     I_y_arr[t + 1] = I_y(Y_arr[t + 1], s);
@@ -292,6 +294,7 @@ const data_table = computed(() => simulate(
   phi.value, // phi
   theta.value, // theta
   b0.value, // b0
+  b1.value, // b1
   d0.value, // d0
   d1.value, // d1
   z.value, // z
@@ -324,6 +327,10 @@ const models = [
     label: "AI"
   },
   {
+    value: "Empty",
+    label: "Empty Planet"
+  },
+  {
     value: "General",
     label: "General"
   }
@@ -342,6 +349,7 @@ const modelPresets = {
     phi: 0,
     theta: 0,
     b0: 0,
+    b1: 0,
     d0: 0,
     d1: 0,
     z: 0,
@@ -360,8 +368,9 @@ const modelPresets = {
     phi: 0,
     theta: 0,
     b0: 0.01,
+    b1: 0,
     d0: 0.02,
-    d1: 0.01,
+    d1: -0.01,
     z: 0,
     s: 0,
     rho: 0,
@@ -378,6 +387,7 @@ const modelPresets = {
     phi: 1,
     theta: 0,
     b0: 0,
+    b1: 0,
     d0: 0,
     d1: 0,
     z: 0.1,
@@ -396,6 +406,7 @@ const modelPresets = {
     phi: 0,
     theta: 0,
     b0: 0.01,
+    b1: 0,
     d0: 0,
     d1: 0,
     z: 0.1,
@@ -414,6 +425,26 @@ const modelPresets = {
     phi: 0.5,
     theta: 0.3,
     b0: 0.01,
+    b1: 0,
+    d0: 0,
+    d1: 0,
+    z: 0.1,
+    s: 0.3,
+    rho: 0.1,
+    X: 1
+  },
+  Empty: {
+    L_1: 1,
+    K_1: 1,
+    A_1: 1,
+    alpha: 0.3,
+    beta: 0,
+    gamma: 0.5,
+    delta: 0.1,
+    phi: 0,
+    theta: 0,
+    b0: 0.01,
+    b1: -0.01,
     d0: 0,
     d1: 0,
     z: 0.1,
@@ -432,6 +463,7 @@ const modelPresets = {
     phi: 0,
     theta: 0,
     b0: 0,
+    b1: 0,
     d0: 0,
     d1: 0,
     z: 0,
@@ -443,21 +475,22 @@ const modelPresets = {
 
 // Define which models should hide each parameter (keep them at default values)
 const parameterVisibility = {
-  alpha: { hiddenInModels: ['Malthus', 'Romer', 'Jones', 'Automation'] }, // Capital share not used in Malthus
-  beta: { hiddenInModels: ['Solow', 'Romer', 'Jones', 'Automation'] }, // Land share only used in Malthus and General
+  alpha: { hiddenInModels: ['Malthus', 'Romer', 'Jones', 'Empty', 'Automation'] }, // Capital share not used in Malthus
+  beta: { hiddenInModels: ['Solow', 'Romer', 'Jones', 'Empty', 'Automation'] }, // Land share only used in Malthus and General
   gamma: { hiddenInModels: ['Solow', 'Malthus', 'Romer'] }, // TFP returns to scale only used in Jones and General
-  delta: { hiddenInModels: ['Malthus', 'Romer', 'Jones'] }, // Depreciation only used in capital models
-  phi: { hiddenInModels: ['Solow', 'Malthus', 'Romer', 'Jones'] }, 
-  theta: { hiddenInModels: ['Solow', 'Malthus', 'Romer', 'Jones'] }, // Research automation only used in General
+  delta: { hiddenInModels: ['Malthus', 'Romer', 'Jones', 'Empty'] }, // Depreciation only used in capital models
+  phi: { hiddenInModels: ['Solow', 'Malthus', 'Romer', 'Jones', 'Empty'] },
+  theta: { hiddenInModels: ['Solow', 'Malthus', 'Romer', 'Jones', 'Empty'] }, // Research automation only used in General
   b0: { hiddenInModels: ['Solow', 'Romer'] }, // Birth rate only used in Malthus, Jones, and General
-  d0: { hiddenInModels: ['Solow', 'Romer', 'Jones', 'Automation'] }, // Base death rate only used in Malthus and General
-  d1: { hiddenInModels: ['Solow', 'Romer', 'Jones', 'Automation'] }, // Death rate decline only used in Malthus and General
+  b1: { hiddenInModels: ['Solow', 'Malthus', 'Romer', 'Jones'] }, // Birth rate decline only used in General
+  d0: { hiddenInModels: ['Solow', 'Romer', 'Jones', 'Empty', 'Automation'] }, // Base death rate only used in Malthus and General
+  d1: { hiddenInModels: ['Solow', 'Romer', 'Jones', 'Empty', 'Automation'] }, // Death rate decline only used in Malthus and General
   z: { hiddenInModels: ['Solow', 'Malthus'] }, // Research productivity only used in Romer, Jones, and General
-  s: { hiddenInModels: ['Malthus', 'Romer', 'Jones'] }, // Savings rate only used in capital models
+  s: { hiddenInModels: ['Malthus', 'Romer', 'Jones', 'Empty'] }, // Savings rate only used in capital models
   rho: { hiddenInModels: ['Solow', 'Malthus'] }, // Researcher share only used in Romer, Jones, and General
-  X: { hiddenInModels: ['Solow', 'Romer', 'Jones', 'Automation'] }, // Research productivity only used in Romer, Jones, and General
+  X: { hiddenInModels: ['Solow', 'Romer', 'Jones', 'Empty', 'Automation'] }, // Research productivity only used in Romer, Jones, and General
   L_1: { hiddenInModels: [] }, // Initial population used in all models
-  K_1: { hiddenInModels: ['Malthus', 'Romer', 'Jones'] }, // Initial capital used in all models
+  K_1: { hiddenInModels: ['Malthus', 'Romer', 'Jones', 'Empty'] }, // Initial capital used in all models
   A_1: { hiddenInModels: [] }, // Initial TFP used in all models
   T: { hiddenInModels: [] } // Simulation periods used in all models
 };
@@ -466,25 +499,25 @@ const parameterVisibility = {
 const variableVisibility = {
   // Aggregates
   Y: { hiddenInModels: [] }, // Output always relevant
-  A: { hiddenInModels: [] }, // TFP always relevant 
-  K: { hiddenInModels: ['Malthus', 'Romer', 'Jones'] }, // Capital not used in Malthus
+  A: { hiddenInModels: [] }, // TFP always relevant
+  K: { hiddenInModels: ['Malthus', 'Romer', 'Jones', 'Empty'] }, // Capital not used in Malthus
   L: { hiddenInModels: [] }, // Labor always relevant
   C: { hiddenInModels: [] },
   
   // Per capita
   y: { hiddenInModels: [] }, // Output per capita always relevant
-  k: { hiddenInModels: ['Malthus', 'Romer', 'Jones'] }, // Capital per capita not used in Malthus
-  x: { hiddenInModels: ['Solow', 'Romer', 'Jones', 'Automation'] }, // Land per capita only in Malthus and General
+  k: { hiddenInModels: ['Malthus', 'Romer', 'Jones', 'Empty'] }, // Capital per capita not used in Malthus
+  x: { hiddenInModels: ['Solow', 'Romer', 'Jones', 'Empty', 'Automation'] }, // Land per capita only in Malthus and General
   c: { hiddenInModels: [] }, 
   
   // Growth rates
   g_Y: { hiddenInModels: [] }, // Output growth always relevant
   g_A: { hiddenInModels: ['Solow', 'Malthus'] }, // TFP growth only in research models
-  g_K: { hiddenInModels: ['Malthus', 'Romer', 'Jones'] }, // Capital growth not used in Malthus
+  g_K: { hiddenInModels: ['Malthus', 'Romer', 'Jones', 'Empty'] }, // Capital growth not used in Malthus
   g_L: { hiddenInModels: ['Solow', 'Romer'] }, // Population growth only in Malthus, Jones, General
   g_C: { hiddenInModels: [] }, 
   g_y: { hiddenInModels: [] }, // Output per capita growth always relevant
-  g_k: { hiddenInModels: ['Malthus', 'Romer', 'Jones'] }, // Capital per capita growth not used in Malthus
+  g_k: { hiddenInModels: ['Malthus', 'Romer', 'Jones', 'Empty'] }, // Capital per capita growth not used in Malthus
   g_c: { hiddenInModels: [] }, 
 };
 
@@ -521,6 +554,7 @@ watch(model_chosen, (newModel) => {
     phi.value = preset.phi;
     theta.value = preset.theta;
     b0.value = preset.b0;
+    b1.value = preset.b1;
     d0.value = preset.d0;
     d1.value = preset.d1;
     z.value = preset.z;
@@ -599,8 +633,9 @@ connect("all")
               <FontAwesomeIcon icon="baby-carriage" />
             </template>
             <ParameterSlider v-model="b0" parameter-name="b0" :min="0" :max="0.1" :step="0.01" latex-expression="b" title="birth rate" />
+            <ParameterSlider v-model="b1" parameter-name="b1" :min="-0.05" :max="0.05" :step="0.01" latex-expression="b_y" title="birth rate change with income" />
             <ParameterSlider v-model="d0" parameter-name="d0" :min="0" :max="0.1" :step="0.01" latex-expression="d" title="base death rate" />
-            <ParameterSlider v-model="d1" parameter-name="d1" :min="0" :max="0.1" :step="0.01" latex-expression="d_y" title="death rate decline with income" />
+            <ParameterSlider v-model="d1" parameter-name="d1" :min="-0.05" :max="0.05" :step="0.01" latex-expression="d_y" title="death rate change with income" />
           </n-collapse-item>
           
           <n-collapse-item name="research" title="Research Dynamics">
@@ -700,8 +735,8 @@ connect("all")
               <n-h6 prefix="bar">
                 Population Law of Motion
               </n-h6>
-                The birth rate is <vue-latex :expression="'b'" />. The base death rate is <vue-latex :expression="'d'" />. Furthermore, the death rate declines in income per capita <vue-latex :expression="'y_t=\\frac{Y_t}{L_t}'" />  at rate <vue-latex :expression="'d_y'" />(e.g. due to better healthcare). Thus, the growth rate of population is <vue-latex :expression="'b - d -  d_y y_t'" />, resulting in the following law of motion:
-                <vue-latex :expression="'L_{t+1} = (1+b - d - d_y y_t)L_t'" display-mode />
+                The birth rate is <vue-latex :expression="'b'" />. The base death rate is <vue-latex :expression="'d'" />. Furthermore, the death rate grows in income per capita <vue-latex :expression="'y_t=\\frac{Y_t}{L_t}'" /> at rate <vue-latex :expression="'d_y'" />. The Malthusian model requires this rate to be negative, so that the death rate declines with income (e.g. due to better healthcare). Thus, the growth rate of population is <vue-latex :expression="'b - (d +  d_y y_t)'" />, resulting in the following law of motion:
+                <vue-latex :expression="'L_{t+1} = (1+b - (d + d_y y_t))L_t'" display-mode />
             </n-card>
 
             <n-card v-if="model_chosen === 'Romer'">
@@ -813,6 +848,42 @@ connect("all")
                 <vue-latex :expression="'L_{t+1} = (1+b)L_t'" display-mode />
             </n-card>
 
+            <n-card v-if="model_chosen === 'Empty'">
+              
+              This model is based on https://www.aeaweb.org/articles?id=10.1257/aer.20201605. If birth rates decline in income (as seems to be the case), the economy can end up in an "Empty Planet" steady state: stagnant output per capita, vanishing population and aggregate output.
+
+              <n-h6 prefix="bar">
+                Production Function
+              </n-h6>
+                The final output good <vue-latex :expression="'Y_t'" /> is produced using a linear production function by labor employed in production <vue-latex :expression="'L_{y,t}'" /> with productivity <vue-latex :expression="'A_t'" />. Returns to ideas are <vue-latex :expression="'\\gamma'" />:
+                <vue-latex :expression="'Y_t = A_t^\\gamma L_{y,t}'" display-mode />
+              <n-h6 prefix="bar">
+                Idea Production Function
+              </n-h6>
+                New ideas are produced using a linear function by researchers <vue-latex :expression="'L_{a,t}'" /> with research productivity <vue-latex :expression="'z'" />. The production of new ideas is <n-text italic>not</n-text> proportional to the existing stock of ideas <vue-latex :expression="'A_t'" />:
+                <vue-latex :expression="'I_{a,t} = z L_{a,t}'" display-mode />
+              <n-h6 prefix="bar">
+                Ideas Law of Motion
+              </n-h6>
+                Ideas accumulate over time through research and development (R&D). Old ideas don't depreciate, and the quantity of new ideas is <vue-latex :expression="'I_{a,t}'" />:
+                <vue-latex :expression="'A_{t+1} = A_t + I_{a,t}'" display-mode />
+              <n-h6 prefix="bar">
+                Labor Resource Constraint
+              </n-h6>
+                Population <vue-latex :expression="'L_t'" /> is split between workers employed in production <vue-latex :expression="'L_{y,t}'" /> and in research <vue-latex :expression="'L_{a,t}'" />:
+                <vue-latex :expression="'L_t = L_{y,t} + L_{a,t}'" display-mode />
+              <n-h6 prefix="bar">
+                Labor Allocation Rule
+              </n-h6>
+                A constant fraction <vue-latex :expression="'\\rho'" /> of workers become researchers:
+                <vue-latex :expression="'L_{a,t} = \\rho L_t'" display-mode />
+              <n-h6 prefix="bar">
+                Population Law of Motion
+              </n-h6>
+                The base birth rate is <vue-latex :expression="'b'" />. The birth rate grows in income per capita <vue-latex :expression="'y_t=\\frac{Y_t}{L_t}'" /> at rate <vue-latex :expression="'b_y'" />. The "Empty Planet" scenario requires this rate to be negative, so that fertility falls as incomes rise. Thus, the growth rate of population is <vue-latex :expression="'b + b_y y_t'" />, resulting in the following law of motion:
+                <vue-latex :expression="'L_{t+1} = (1+b + b_y y_t ) L_t'" display-mode />
+            </n-card>
+
             <n-card v-if="model_chosen === 'General'">
 
               <n-h6 prefix="bar">
@@ -838,8 +909,8 @@ connect("all")
               <n-h6 prefix="bar">
                 Population Law of Motion
               </n-h6>
-                The birth rate is <vue-latex :expression="'b'" />. The base death rate is <vue-latex :expression="'d'" />. Furthermore, the death rate declines in income per capita <vue-latex :expression="'y_t=\\frac{Y_t}{L_t}'" />  at rate <vue-latex :expression="'d_y'" />, e.g. due to better healthcare. Thus, the growth rate of population is <vue-latex :expression="'b - d -  d_y y_t'" />:
-                <vue-latex :expression="'L_{t+1} = (1+b - d - d_y y_t)L_t'" display-mode />
+                The base birth rate is <vue-latex :expression="'b'" />. The birth rate grows in income per capita <vue-latex :expression="'y_t=\\frac{Y_t}{L_t}'" /> at rate <vue-latex :expression="'b_y'" />. The base death rate is <vue-latex :expression="'d'" />. The death rate grows in income per capita at rate <vue-latex :expression="'d_y'" />. Thus, the growth rate of population is <vue-latex :expression="'b + b_y y_t - (d +  d_y y_t)'" />, resulting in the following law of motion:
+                <vue-latex :expression="'L_{t+1} = (1+b + b_y y_t - (d + d_y y_t))L_t'" display-mode />
               <n-h6 prefix="bar">
                 Resource Constraint
               </n-h6>
