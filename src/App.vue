@@ -696,6 +696,8 @@ connect("all")
             
             <n-card v-if="model_chosen === 'Solow'">
 
+              The Solow growth model was originally developed in <a href="https://doi.org/10.2307/1884513" class="reference">Solow (1956)</a>. The simplified version of the model presented here closely follows <a href="https://wwnorton.com/books/9781324063612" class="reference">Jones (2024, ch. 5)</a>. It focuses on capital accumulation and forms the backbone of many modern growth models.
+
               <n-h6 prefix="bar">
                 Production Function
               </n-h6>
@@ -726,6 +728,12 @@ connect("all")
 
             <n-card v-if="model_chosen === 'Malthus'">
 
+              <p>The reasoning behind this model was formulated in <a href="https://www.jstor.org/stable/j.ctv1bvnf95" class="reference">Malthus (1798)</a>. Malthus believed that better living standards lead to greater population growth (e.g. because richer societies can afford better nutrition and healthcare). If, furthermore, the supply of land is fixed, then greater population density should decrease the average living standards. This generates a self-correcting force: any increase in living standards is gradually offset by population growth, driving the society back to subsistence level. This argument helps understand the largely constant average standard of living in the agricultural societies throughout most of human histories, up to Malthus's time.
+              </p>
+              
+              <p>While Malthus's work was not mathematical, his main insights can be translated into formal mathematical language of modern models of economic growth. One such formalization is presented below: it is inspired by <a href="https://doi.org/10.1257/00028280260344731" class="reference">Hansen and Prescott (2002)</a> and <a href="https://wwnorton.com/books/9781324059578" class="reference">Jones and Vollrath (2024, ch. 9)</a>.
+              </p>
+
               <n-h6 prefix="bar">
                 Production Function
               </n-h6>
@@ -740,6 +748,8 @@ connect("all")
             </n-card>
 
             <n-card v-if="model_chosen === 'Romer'">
+              
+              The endogenous growth model, developed by <a href="https://doi.org/10.1086/261725" class="reference">Romer (1990)</a> includes the production of new ideas within the model, instead of leaving the level of technology exogenous as in the Solow modle. The simplified version of the model here builds on <a href="https://wwnorton.com/books/9781324063612" class="reference">Jones (2024, ch. 6)</a>.
 
               <n-h6 prefix="bar">
                 Production Function
@@ -850,7 +860,7 @@ connect("all")
 
             <n-card v-if="model_chosen === 'Empty'">
               
-              This model is based on https://www.aeaweb.org/articles?id=10.1257/aer.20201605. If birth rates decline in income (as seems to be the case), the economy can end up in an "Empty Planet" steady state: stagnant output per capita, vanishing population and aggregate output.
+              This model is a simplified version of <a href="https://doi.org/10.1257/aer.20201605" class="reference">Jones (2022)</a>. If birth rates decline in income (as seems to be the case), the economy can end up in an "Empty Planet" steady state: stagnant output per capita, vanishing population and aggregate output.
 
               <n-h6 prefix="bar">
                 Production Function
@@ -1051,6 +1061,15 @@ connect("all")
 
   .n-collapse-item__content-inner {
     padding: 50px 0;
+  }
+
+  a.reference {
+    border-bottom: 1px dashed var(--n-text-color) !important;
+    color: var(--n-text-color) !important;
+    text-decoration: none;
+  }
+  a.reference:hover {
+    border-bottom: 1px solid var(--n-text-color) !important;
   }
 
 </style>
