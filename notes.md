@@ -1,0 +1,2 @@
+- favicon: garden:line-chart-26 from https://icon-sets.iconify.design/
+    - set color to theme, download as png, crop to content and rescale in gimp (all saved in icon/), save as public/favicon.png
