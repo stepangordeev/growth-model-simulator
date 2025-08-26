@@ -696,7 +696,13 @@ connect("all")
             
             <n-card v-if="model_chosen === 'Solow'">
 
-              The Solow growth model was originally developed in <a href="https://doi.org/10.2307/1884513" class="reference">Solow (1956)</a>. The simplified version of the model presented here closely follows <a href="https://wwnorton.com/books/9781324063612" class="reference">Jones (2024, ch. 5)</a>. It focuses on capital accumulation and forms the backbone of many modern growth models.
+              <p>The Solow growth model was originally developed in <a href="https://doi.org/10.2307/1884513" class="reference">Solow (1956)</a>. The simplified version of the model presented here closely follows <a href="https://wwnorton.com/books/9781324063612" class="reference">Jones (2024, ch. 5)</a>. It focuses on capital accumulation and forms the backbone of many modern growth models.</p>
+
+              <p>
+                The model illustrates how the accumulation of capital can be behind short- and medium-run growth as the economy converges to a steady state. Sustained long-run growth cannot be attained by capital accumulation alone due to the diminishing returns to capital: at some point, the additional output produced by adding more capital cannot cover the depreciation of existing capital, leading to stagnation.
+              </p>
+
+              <p>Sustained long-run growth (balanced growth path) in this model can only be achieved through exogenous growth in total factor productivity. The Solow model, however, is silent on where this TFP growth might be coming from.</p>
 
               <n-h6 prefix="bar">
                 Production Function
@@ -728,16 +734,15 @@ connect("all")
 
             <n-card v-if="model_chosen === 'Malthus'">
 
-              The reasoning behind this model was formulated in <a href="https://www.jstor.org/stable/j.ctv1bvnf95" class="reference">Malthus (1798)</a>. Malthus believed that better living standards lead to greater population growth (e.g. because richer societies can afford better nutrition and healthcare). If, furthermore, the supply of land is fixed, then greater population density should decrease the average living standards. This generates a self-correcting force: any increase in living standards is gradually offset by population growth, driving the society back to subsistence level. This argument helps understand the largely constant average standard of living in the agricultural societies throughout most of human histories, up to Malthus's time.
-              <br />
-              
-              While Malthus's work was not mathematical, his main insights can be translated into formal mathematical language of modern models of economic growth. One such formalization is presented below: it is inspired by <a href="https://doi.org/10.1257/00028280260344731" class="reference">Hansen and Prescott (2002)</a> and <a href="https://wwnorton.com/books/9781324059578" class="reference">Jones and Vollrath (2024, ch. 9)</a>.
+              <p>The reasoning behind this model was formulated in <a href="https://www.jstor.org/stable/j.ctv1bvnf95" class="reference">Malthus (1798)</a>. Malthus believed that better living standards lead to greater population growth (e.g. because richer societies can afford better nutrition and healthcare). If, furthermore, the supply of land is fixed, then an increase in population density should decrease the average living standards. This generates a self-correcting force: any increase in living standards (e.g. thanks to better technology) is gradually offset by population growth, driving the society back to subsistence level at which everyone is poor enough that the number of births equals the number of deaths. This argument helps understand the largely constant average standard of living in the agricultural societies throughout most of human history, up to Malthus's time.</p>
+
+              <p>While Malthus's work was not mathematical, his main insights can be translated into formal mathematical language of modern models of economic growth. One such formalization is presented below: it is inspired by <a href="https://doi.org/10.1257/00028280260344731" class="reference">Hansen and Prescott (2002)</a> and <a href="https://wwnorton.com/books/9781324059578" class="reference">Jones and Vollrath (2024, ch. 9)</a>.</p>
 
 
               <n-h6 prefix="bar">
                 Production Function
               </n-h6>
-                The final output good <vue-latex :expression="'Y_t'" /> is produced using a constant-returns-to-scale Cobb-Douglas production function. Production uses land <vue-latex :expression="'X'" /> and labor <vue-latex :expression="'L_t'" />, with total factor productivity <vue-latex :expression="'A_t'" />. Land is fixed at a constant level:
+                The final output good <vue-latex :expression="'Y_t'" /> is produced using a constant-returns-to-scale Cobb-Douglas production function. Production uses land <vue-latex :expression="'X'" /> and labor <vue-latex :expression="'L_t'" />, with total factor productivity <vue-latex :expression="'A_t'" />. Land is fixed at a constant level.
                 <vue-latex :expression="'Y_t = A_t X^\\beta L_t^{1-\\beta}'" display-mode />
 
               <n-h6 prefix="bar">
@@ -749,7 +754,9 @@ connect("all")
 
             <n-card v-if="model_chosen === 'Romer'">
 
-              The endogenous growth model was developed by <a href="https://doi.org/10.1086/261725" class="reference">Romer (1990)</a>. It includes the production of new ideas within the model, instead of leaving the level of technology exogenous as in the Solow model. The simplified version of the model here builds on <a href="https://wwnorton.com/books/9781324063612" class="reference">Jones (2024, ch. 6)</a>.
+              <p>The endogenous growth model includes the production of new ideas within the model, instead of leaving the level of technology exogenous as in the Solow model. The level of TFP can be increased by researchers generating new ideas. The long-run growth rate of TFP along the balanced growth path is proportional to the number of workers engaged in research rather than final good production.</p>
+
+              <p> The endogenous growth model was developed by <a href="https://doi.org/10.1086/261725" class="reference">Romer (1990)</a>, and so is often referred to as the Romer model. The simplified version of the model here builds on <a href="https://wwnorton.com/books/9781324063612" class="reference">Jones (2024, ch. 6)</a>.</p>
 
               <n-h6 prefix="bar">
                 Production Function
@@ -780,7 +787,10 @@ connect("all")
 
             <n-card v-if="model_chosen === 'Jones'">
 
-              Semi-endogenous growth theory was developed in <a href="https://doi.org/10.1086/262002" class="reference">Jones (1995)</a>. See <a href="https://doi.org/10.1146/annurev-economics-080521-012458" class="reference">Jones (2022)</a> for a recent overview. The simplified version of the model here builds on <a href="https://wwnorton.com/books/9781324063612" class="reference">Jones (2024, ch. 6)</a>.
+              <p>The semi-endogenous growth model drops the endogenous model's assumption that the production of new ideas is proportional to the existing stock of ideas. The problem with this assumption was that it led the endogenous growth model to predict that the long-run growth rate of TFP (and output per capita) along the balanced growth path is proportional to the number of researchers in the economy. But this contradicts empirical evidence: the growth rate has been fairly stable in developed countries in recent history even as the number of researchers and research effort has been growing steadily (<a href="https://doi.org/10.1257/aer.20180338" class="reference">Bloom et al., 2020</a>). The semi-endogenous growth model is able to match this fact: if the generation of new ideas is not proportional to the stock of existing ideas, then the long-run growth of TFP and output per capita depends on steady population growth. As a result, the growth rate of the economy along the balanced growth path is proportional to the growth rate of the number of researchers (and thus the the growth rate of population).</p>
+                
+              <p>Semi-endogenous growth theory was developed in <a href="https://doi.org/10.1086/262002" class="reference">Jones (1995)</a>. See <a href="https://doi.org/10.1146/annurev-economics-080521-012458" class="reference">Jones (2022)</a> for a recent overview. The simplified version of the model here builds on <a href="https://wwnorton.com/books/9781324063612" class="reference">Jones (2024, ch. 6)</a>.</p>
+
               <n-h6 prefix="bar">
                 Production Function
               </n-h6>
@@ -815,9 +825,14 @@ connect("all")
 
             <n-card v-if="model_chosen === 'Automation'">
 
+              <p>
               This model is an extension of the semi-endogenous model that allows for automation in the idea production process. The formulation below is inspired by <a href="https://www.nber.org/books-and-chapters/economics-artificial-intelligence-agenda/artificial-intelligence-and-economic-growth" class="reference">Aghion, Jones, and Jones (2019, ch. 9)</a> and <a href="https://doi.org/10.1146/annurev-economics-080521-012458" class="reference">Jones (2022)</a>.
-              <br />
-              In this model, ideas are produced by researches and artificial intelligence (represented with capital) rather than by researchers alone. If research is sufficiently automated (capital share in idea production <vue-latex :expression="'\\theta'" /> is high enough), then the model generates a singularity: infinite TFP and GDP are reached within finite time. The simulation breaks at this point. The degree of automation needed for this to happen is determined by the returns to ideas in final good production (<vue-latex :expression="'\\gamma'" />) and in idea production (<vue-latex :expression="'\\phi'" />).
+              </p>
+              <p>In this model, ideas are produced by researches and artificial intelligence (represented with capital) rather than by researchers alone. This allows the model to escape the prediction of standard semi-endogenous theory that the long-run growth rate of TFP (and output per capita) must be proportional to the growth rate of population. Research automation in this model permits a balanced growth path even in the absence of population growth.
+              </p>
+              <p>
+              At extreme levels of research automation, the model generates an even starker prediction. If research is sufficiently automated (capital share in idea production <vue-latex :expression="'\\theta'" /> is high enough), then the model generates a singularity: infinite TFP and GDP are reached within finite time. The simulation breaks at this point. The degree of automation needed for this to happen is determined by the returns to ideas in final good production (<vue-latex :expression="'\\gamma'" />) and in idea production (<vue-latex :expression="'\\phi'" />).
+              </p>
 
               <n-h6 prefix="bar">
                 Production Function
@@ -863,7 +878,9 @@ connect("all")
 
             <n-card v-if="model_chosen === 'Empty'">
               
-              This model is a simplified version of <a href="https://doi.org/10.1257/aer.20201605" class="reference">Jones (2022)</a>. It extends the basic semi-endogenous growth model with a negative relationship between income and fertility. If birth rates decline in income (as seems to be the case in the modern world, both within and across countries), the economy can get trapped in an "Empty Planet" steady state: instead of continued growth in population and output per capita, at some point population passes its peak and starts declining, while output per capita stagnates for this vanishing population.
+              <p>This model extends the basic semi-endogenous growth model with a negative relationship between income and fertility. The formulation below is a simplified version of <a href="https://doi.org/10.1257/aer.20201605" class="reference">Jones (2022)</a>.</p>
+
+              <p>If birth rates decline in income (as seems to be the case in the modern world, both within and across countries), the economy can get trapped in an "Empty Planet" steady state: instead of continued growth in population and output per capita (as in the standard semi-endogenous model), at some point people become so rich and have so few babies that population passes its peak and starts declining. Because population growth is essential for continued technological progress in the semi-endogenous model, this leads to stagnating output per capita for this vanishing population.</p>
 
               <n-h6 prefix="bar">
                 Production Function
@@ -898,8 +915,8 @@ connect("all")
             </n-card>
 
             <n-card v-if="model_chosen === 'General'">
-              
-              This is a general model that nests all of the special growth models in prior tabs. By adjusting the parameters, you can replicate any of those special models, or explore new ones.
+
+              <p>This is a general model that nests all of the special growth models in prior tabs. By adjusting the parameters, you can replicate any of those special models, or explore new ones.</p>
 
               <n-h6 prefix="bar">
                 Production Function
