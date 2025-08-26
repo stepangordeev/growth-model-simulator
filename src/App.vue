@@ -316,11 +316,11 @@ const models = [
   },
   {
     value: "Romer",
-    label: "Romer"
+    label: "Endogenous"
   },
   {
     value: "Jones",
-    label: "Jones"
+    label: "Semi-Endogenous"
   },
   {
     value: "Automation",
@@ -443,7 +443,7 @@ const modelPresets = {
     delta: 0.1,
     phi: 0,
     theta: 0,
-    b0: 0.01,
+    b0: 0.02,
     b1: -0.01,
     d0: 0,
     d1: 0,
@@ -728,11 +728,11 @@ connect("all")
 
             <n-card v-if="model_chosen === 'Malthus'">
 
-              <p>The reasoning behind this model was formulated in <a href="https://www.jstor.org/stable/j.ctv1bvnf95" class="reference">Malthus (1798)</a>. Malthus believed that better living standards lead to greater population growth (e.g. because richer societies can afford better nutrition and healthcare). If, furthermore, the supply of land is fixed, then greater population density should decrease the average living standards. This generates a self-correcting force: any increase in living standards is gradually offset by population growth, driving the society back to subsistence level. This argument helps understand the largely constant average standard of living in the agricultural societies throughout most of human histories, up to Malthus's time.
-              </p>
+              The reasoning behind this model was formulated in <a href="https://www.jstor.org/stable/j.ctv1bvnf95" class="reference">Malthus (1798)</a>. Malthus believed that better living standards lead to greater population growth (e.g. because richer societies can afford better nutrition and healthcare). If, furthermore, the supply of land is fixed, then greater population density should decrease the average living standards. This generates a self-correcting force: any increase in living standards is gradually offset by population growth, driving the society back to subsistence level. This argument helps understand the largely constant average standard of living in the agricultural societies throughout most of human histories, up to Malthus's time.
+              <br />
               
-              <p>While Malthus's work was not mathematical, his main insights can be translated into formal mathematical language of modern models of economic growth. One such formalization is presented below: it is inspired by <a href="https://doi.org/10.1257/00028280260344731" class="reference">Hansen and Prescott (2002)</a> and <a href="https://wwnorton.com/books/9781324059578" class="reference">Jones and Vollrath (2024, ch. 9)</a>.
-              </p>
+              While Malthus's work was not mathematical, his main insights can be translated into formal mathematical language of modern models of economic growth. One such formalization is presented below: it is inspired by <a href="https://doi.org/10.1257/00028280260344731" class="reference">Hansen and Prescott (2002)</a> and <a href="https://wwnorton.com/books/9781324059578" class="reference">Jones and Vollrath (2024, ch. 9)</a>.
+
 
               <n-h6 prefix="bar">
                 Production Function
@@ -748,8 +748,8 @@ connect("all")
             </n-card>
 
             <n-card v-if="model_chosen === 'Romer'">
-              
-              The endogenous growth model, developed by <a href="https://doi.org/10.1086/261725" class="reference">Romer (1990)</a> includes the production of new ideas within the model, instead of leaving the level of technology exogenous as in the Solow modle. The simplified version of the model here builds on <a href="https://wwnorton.com/books/9781324063612" class="reference">Jones (2024, ch. 6)</a>.
+
+              The endogenous growth model was developed by <a href="https://doi.org/10.1086/261725" class="reference">Romer (1990)</a>. It includes the production of new ideas within the model, instead of leaving the level of technology exogenous as in the Solow model. The simplified version of the model here builds on <a href="https://wwnorton.com/books/9781324063612" class="reference">Jones (2024, ch. 6)</a>.
 
               <n-h6 prefix="bar">
                 Production Function
@@ -780,6 +780,7 @@ connect("all")
 
             <n-card v-if="model_chosen === 'Jones'">
 
+              Semi-endogenous growth theory was developed in <a href="https://doi.org/10.1086/262002" class="reference">Jones (1995)</a>. See <a href="https://doi.org/10.1146/annurev-economics-080521-012458" class="reference">Jones (2022)</a> for a recent overview. The simplified version of the model here builds on <a href="https://wwnorton.com/books/9781324063612" class="reference">Jones (2024, ch. 6)</a>.
               <n-h6 prefix="bar">
                 Production Function
               </n-h6>
@@ -814,6 +815,8 @@ connect("all")
 
             <n-card v-if="model_chosen === 'Automation'">
 
+              This model is an extension of the semi-endogenous model that allows for automation in the idea production process. The formulation below is inspired by <a href="https://www.nber.org/books-and-chapters/economics-artificial-intelligence-agenda/artificial-intelligence-and-economic-growth" class="reference">Aghion, Jones, and Jones (2019, ch. 9)</a> and <a href="https://doi.org/10.1146/annurev-economics-080521-012458" class="reference">Jones (2022)</a>.
+              <br />
               In this model, ideas are produced by researches and artificial intelligence (represented with capital) rather than by researchers alone. If research is sufficiently automated (capital share in idea production <vue-latex :expression="'\\theta'" /> is high enough), then the model generates a singularity: infinite TFP and GDP are reached within finite time. The simulation breaks at this point. The degree of automation needed for this to happen is determined by the returns to ideas in final good production (<vue-latex :expression="'\\gamma'" />) and in idea production (<vue-latex :expression="'\\phi'" />).
 
               <n-h6 prefix="bar">
@@ -860,7 +863,7 @@ connect("all")
 
             <n-card v-if="model_chosen === 'Empty'">
               
-              This model is a simplified version of <a href="https://doi.org/10.1257/aer.20201605" class="reference">Jones (2022)</a>. If birth rates decline in income (as seems to be the case), the economy can end up in an "Empty Planet" steady state: stagnant output per capita, vanishing population and aggregate output.
+              This model is a simplified version of <a href="https://doi.org/10.1257/aer.20201605" class="reference">Jones (2022)</a>. It extends the basic semi-endogenous growth model with a negative relationship between income and fertility. If birth rates decline in income (as seems to be the case in the modern world, both within and across countries), the economy can get trapped in an "Empty Planet" steady state: instead of continued growth in population and output per capita, at some point population passes its peak and starts declining, while output per capita stagnates for this vanishing population.
 
               <n-h6 prefix="bar">
                 Production Function
@@ -895,6 +898,8 @@ connect("all")
             </n-card>
 
             <n-card v-if="model_chosen === 'General'">
+              
+              This is a general model that nests all of the special growth models in prior tabs. By adjusting the parameters, you can replicate any of those special models, or explore new ones.
 
               <n-h6 prefix="bar">
                 Production Function
