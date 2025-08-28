@@ -619,7 +619,7 @@ connect("all")
             <ParameterSlider v-model="z" parameter-name="z" :min="0" :max="1" :step="0.1" latex-expression="z" title="research productivity" />
             <ParameterSlider v-model="phi" parameter-name="phi" :min="0" :max="1" :step="0.1" latex-expression="\phi" title="research returns to scale" />
             <ParameterSlider v-model="theta" parameter-name="theta" :min="0" :max="1" :step="0.1" latex-expression="\theta" title="research automation" />
-            <ParameterSlider v-model="rho" parameter-name="rho" :min="0" :max="1" :step="0.1" latex-expression="\rho" title="researcher share" />
+            <ParameterSlider v-model="rho" parameter-name="rho" :min="0" :max="1" :step="0.1" latex-expression="\rho" title="researcher share of population" />
           </n-collapse-item>
           
           <n-collapse-item name="initial" title="Initial Values">
