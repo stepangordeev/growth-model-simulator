@@ -652,21 +652,26 @@ connect("all")
               &nbsp;&nbsp;<span>Model</span>
           </template>
           
-          <n-flex vertical>
+          <div style="display: flex; justify-content: center; width: 100%;">
+            <div style="max-width: 1400px; width: 100%;">
+              <n-flex vertical>
 
             <n-card>
               This dashboard simulates several models of economic growth that are commonly found in undergraduate macroeconomics and growth courses.
               Choose the model to simulate using the selector below. Simulation results can be explored using the tabs above. Model parameters can be adjusted using the sliders in the sidebar. When the model is switched, parameters are reset to default values for the chosen model.
             </n-card>
-            
-            <n-radio-group v-model:value="model_chosen" name="radiobuttongroup1">
-              <n-radio-button
-                v-for="model in models"
-                :key="model.value"
-                :value="model.value"
-                :label="model.label"
-              />
-            </n-radio-group>
+
+            <div style="display: flex; align-items: center; justify-content: center; gap: 12px;">
+              <span style="font-weight: bold;">Selected model:</span>
+              <n-radio-group v-model:value="model_chosen" name="radiobuttongroup1" size="large">
+                <n-radio-button
+                  v-for="model in models"
+                  :key="model.value"
+                  :value="model.value"
+                  :label="model.label"
+                />
+              </n-radio-group>
+            </div>
             
             <n-card v-if="model_chosen === 'Solow'">
 
@@ -939,7 +944,9 @@ connect("all")
                 <vue-latex :expression="'L_{a,t} = \\rho L_t'" display-mode />
             </n-card>
 
-          </n-flex>
+              </n-flex>
+            </div>
+          </div>
         </n-tab-pane>
 
         <n-tab-pane name="aggregates">
