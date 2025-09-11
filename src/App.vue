@@ -26,10 +26,10 @@ import ParameterSlider from './ParameterSlider.vue'
 import VariablePlot from './VariablePlot.vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome'
-import { faArrowTrendUp, faHammer, faIndustry, faBabyCarriage, faFlask, faGlobe, faPerson, faRocket, faStar, faTable, faGamepad } from '@fortawesome/free-solid-svg-icons'
+import { faArrowTrendUp, faHammer, faIndustry, faBabyCarriage, faFlask, faGlobe, faPerson, faRocket, faStar, faTable, faGamepad, faBolt, faBurst } from '@fortawesome/free-solid-svg-icons'
 import { connect } from "echarts";
 /* add icons to the library */
-library.add(faArrowTrendUp, faHammer, faIndustry, faBabyCarriage, faFlask, faGlobe, faPerson, faRocket, faStar, faTable, faGamepad)
+library.add(faArrowTrendUp, faHammer, faIndustry, faBabyCarriage, faFlask, faGlobe, faPerson, faRocket, faStar, faTable, faGamepad, faBolt, faBurst)
 
 // fonts
 // sans. If change it, also update echarts_font in VariablePlot.vue
@@ -71,8 +71,9 @@ const nu = ref(0);
 const z = ref(0);
 const s = ref(0.3);
 const rho = ref(0);
-const X = ref(1);
+const X_1 = ref(1);
 const T = ref(200);
+const S = ref(100); // period when shock hits
 
 
 // creates marks for naive ui's slider: marks at step intervals, with labels only at min and max, plus current value
@@ -190,8 +191,9 @@ const simulate = (
   z,
   s,
   rho,
-  X,
-  T
+  X_1,
+  T,
+  S
 ) => {
   // Initialize arrays for all variables
   const period = Array.from({ length: T }, (_, i) => i + 1);
@@ -199,6 +201,7 @@ const simulate = (
   const A_arr = new Array(T);
   const K_arr = new Array(T);
   const L_arr = new Array(T);
+  const X_arr = new Array(T);
   const I_y_arr = new Array(T);
   const I_a_arr = new Array(T);
   const C_arr = new Array(T);
@@ -219,29 +222,31 @@ const simulate = (
   L_arr[0] = L_1;
   K_arr[0] = K_1;
   A_arr[0] = A_1;
-  Y_arr[0] = Y(A_arr[0], K_arr[0], X, L_arr[0] * (1 - rho), gamma, alpha, beta);
+  X_arr[0] = X_1;
+  Y_arr[0] = Y(A_arr[0], K_arr[0], X_arr[0], L_arr[0] * (1 - rho), gamma, alpha, beta);
   I_y_arr[0] = I_y(Y_arr[0], s);
   I_a_arr[0] = I_a(A_arr[0], K_arr[0], L_arr[0] * rho, z, phi, theta);
   C_arr[0] = Y_arr[0] - I_y_arr[0];
   y_arr[0] = Y_arr[0] / L_arr[0];
   k_arr[0] = K_arr[0] / L_arr[0];
-  x_arr[0] = X / L_arr[0];
+  x_arr[0] = X_arr[0] / L_arr[0];
   c_arr[0] = C_arr[0] / L_arr[0];
 
   // Simulate forward
   for (let t = 0; t < T - 1; t++) {
     A_arr[t + 1] = A_lom(A_arr[t], I_a_arr[t]);
     L_arr[t + 1] = L_lom(L_arr[t], n, nu, y_arr[t]);
+    X_arr[t + 1] = X_arr[t]; // Land is constant, unless shocked
     K_arr[t + 1] = K_lom(K_arr[t], I_y_arr[t], delta);
-    Y_arr[t + 1] = Y(A_arr[t + 1], K_arr[t + 1], X, L_arr[t + 1] * (1 - rho), gamma, alpha, beta);
+    Y_arr[t + 1] = Y(A_arr[t + 1], K_arr[t + 1], X_arr[t + 1], L_arr[t + 1] * (1 - rho), gamma, alpha, beta);
     I_y_arr[t + 1] = I_y(Y_arr[t + 1], s);
     I_a_arr[t + 1] = I_a(A_arr[t + 1], K_arr[t + 1], L_arr[t + 1] * rho, z, phi, theta);
     C_arr[t + 1] = Y_arr[t + 1] - I_y_arr[t + 1];
     c_arr[t + 1] = C_arr[t + 1] / L_arr[t + 1];
     y_arr[t + 1] = Y_arr[t + 1] / L_arr[t + 1];
     k_arr[t + 1] = K_arr[t + 1] / L_arr[t + 1];
-    x_arr[t + 1] = X / L_arr[t + 1];
-    
+    x_arr[t + 1] = X_arr[t + 1] / L_arr[t + 1];
+
     // Growth rates (undefined for first period)
     g_Y[t + 1] = (Y_arr[t + 1] - Y_arr[t]) / Y_arr[t];
     g_A[t + 1] = (A_arr[t + 1] - A_arr[t]) / A_arr[t];
@@ -260,6 +265,7 @@ const simulate = (
     A: A_arr[i],
     K: K_arr[i],
     L: L_arr[i],
+    X: X_arr[i],
     I_y: I_y_arr[i],
     I_a: I_a_arr[i],
     C: C_arr[i],
@@ -294,7 +300,7 @@ const data_table = computed(() => simulate(
   z.value, // z
   s.value, // s
   rho.value, // rho
-  X.value, // X
+  X_1.value, // X
   T.value // T
 ));
 
@@ -330,6 +336,8 @@ const models = [
   }
 ]
 
+const variable_to_shock = ref("none");
+
 // Parameter presets for each model
 const modelPresets = {
   Solow: {
@@ -347,7 +355,7 @@ const modelPresets = {
     z: 0,
     s: 0.3,
     rho: 0,
-    X: 1
+    X_1: 1
   },
   Malthus: {
     L_1: 1,
@@ -364,7 +372,7 @@ const modelPresets = {
     z: 0,
     s: 0,
     rho: 0,
-    X: 1
+    X_1: 1
   },
   Romer: {
     L_1: 1,
@@ -381,7 +389,7 @@ const modelPresets = {
     z: 0.1,
     s: 0.3,
     rho: 0.1,
-    X: 1
+    X_1: 1
   },
   Jones: {
     L_1: 1,
@@ -398,7 +406,7 @@ const modelPresets = {
     z: 0.1,
     s: 0.3,
     rho: 0.1,
-    X: 1
+    X_1: 1
   },
   Automation: {
     L_1: 1,
@@ -415,7 +423,7 @@ const modelPresets = {
     z: 0.1,
     s: 0.3,
     rho: 0.1,
-    X: 1
+    X_1: 1
   },
   Empty: {
     L_1: 1,
@@ -432,7 +440,7 @@ const modelPresets = {
     z: 0.1,
     s: 0.3,
     rho: 0.1,
-    X: 1
+    X_1: 1
   },
   General: {
     L_1: 1,
@@ -449,7 +457,7 @@ const modelPresets = {
     z: 0,
     s: 0.3,
     rho: 0,
-    X: 1
+    X_1: 1
   }
 };
 
@@ -466,9 +474,9 @@ const parameterVisibility = {
   z: { hiddenInModels: ['Solow', 'Malthus'] }, // Research productivity only used in Romer, Jones, and General
   s: { hiddenInModels: ['Malthus', 'Romer', 'Jones', 'Empty'] }, // Savings rate only used in capital models
   rho: { hiddenInModels: ['Solow', 'Malthus'] }, // Researcher share only used in Romer, Jones, and General
-  X: { hiddenInModels: ['Solow', 'Romer', 'Jones', 'Empty', 'Automation'] }, // Research productivity only used in Romer, Jones, and General
   L_1: { hiddenInModels: [] }, // Initial population used in all models
   K_1: { hiddenInModels: ['Malthus', 'Romer', 'Jones', 'Empty'] }, // Initial capital used in all models
+  X_1: { hiddenInModels: ['Solow', 'Romer', 'Jones', 'Empty', 'Automation'] }, // Land only in Malthus and General
   A_1: { hiddenInModels: [] }, // Initial TFP used in all models
   T: { hiddenInModels: [] } // Simulation periods used in all models
 };
@@ -480,6 +488,7 @@ const variableVisibility = {
   A: { hiddenInModels: [] }, // TFP always relevant
   K: { hiddenInModels: ['Malthus', 'Romer', 'Jones', 'Empty'] }, // Capital not used in Malthus
   L: { hiddenInModels: [] }, // Labor always relevant
+  X: { hiddenInModels: ['Solow', 'Romer', 'Jones', 'Empty', 'Automation'] }, // Land only in Malthus and General
   C: { hiddenInModels: [] },
   
   // Per capita
@@ -513,6 +522,68 @@ const isVariableVisible = (variableName) => {
   return !visibility.hiddenInModels.includes(model_chosen.value);
 };
 
+// Computed property for shock variable options
+const shockVariableOptions = computed(() => {
+  const options = [
+    { label: 'None', value: 'none', description: 'None', latex: null }
+  ];
+  
+  // Add parameters that are visible for the current model
+  const parameters = [
+    { key: 'alpha', description: 'Capital share', latex: '\\alpha', value: 'alpha' },
+    { key: 'beta', description: 'Land share', latex: '\\beta', value: 'beta' },
+    { key: 'gamma', description: 'TFP returns', latex: '\\gamma', value: 'gamma' },
+    { key: 'delta', description: 'Depreciation', latex: '\\delta', value: 'delta' },
+    { key: 's', description: 'Savings rate', latex: 's', value: 's' },
+    { key: 'n', description: 'Population growth', latex: 'n', value: 'n' },
+    { key: 'nu', description: 'Income-fertility', latex: '\\nu', value: 'nu' },
+    { key: 'z', description: 'Research productivity', latex: 'z', value: 'z' },
+    { key: 'phi', description: 'Research returns', latex: '\\phi', value: 'phi' },
+    { key: 'theta', description: 'Research automation', latex: '\\theta', value: 'theta' },
+    { key: 'rho', description: 'Researcher share', latex: '\\rho', value: 'rho' },
+  ];
+  
+  parameters.forEach(param => {
+    if (isParameterVisible(param.key)) {
+      options.push({
+        label: `${param.description} (${param.latex})`,
+        value: param.value,
+        description: param.description,
+        latex: param.latex
+      });
+    }
+  });
+  
+  // Add endogenous variables that are visible for the current model
+  const variables = [
+    { key: 'A', description: 'TFP', latex: 'A', value: 'A' },
+    { key: 'K', description: 'Capital', latex: 'K', value: 'K' },
+    { key: 'L', description: 'Labor', latex: 'L', value: 'L' },
+    { key: 'X', description: 'Land', latex: 'X', value: 'X' }
+  ];
+  
+  variables.forEach(variable => {
+    if (isVariableVisible(variable.key)) {
+      options.push({
+        label: `${variable.description} (${variable.latex})`,
+        value: variable.value,
+        description: variable.description,
+        latex: variable.latex
+      });
+    }
+  });
+  
+  return options;
+});
+
+// Render function for shock variable labels
+const renderShockLabel = (option) => {
+  if (!option.latex) {
+    return option.description || option.label;
+  }
+  return h(VueLatex, { expression: option.latex });
+};
+
 // Provide functions and reactive data to child components
 provide('isParameterVisible', isParameterVisible);
 provide('isVariableVisible', isVariableVisible);
@@ -536,7 +607,7 @@ watch(model_chosen, (newModel) => {
     z.value = preset.z;
     s.value = preset.s;
     rho.value = preset.rho;
-    X.value = preset.X;
+    X_1.value = preset.X_1;
   }
 }, { immediate: true }); // Apply preset immediately when component mounts
 
@@ -626,10 +697,10 @@ connect("all")
             <template #header-extra>
               <FontAwesomeIcon icon="rocket" />
             </template>
+            <ParameterSlider v-model="A_1" parameter-name="A_1" :min="1" :max="10" :step="1" latex-expression="A_1" title="initial TFP" />
             <ParameterSlider v-model="K_1" parameter-name="K_1" :min="1" :max="10" :step="1" latex-expression="K_1" title="initial capital" />
             <ParameterSlider v-model="L_1" parameter-name="L_1" :min="1" :max="10" :step="1" latex-expression="L_1" title="initial population" />
-            <ParameterSlider v-model="A_1" parameter-name="A_1" :min="1" :max="10" :step="1" latex-expression="A_1" title="initial TFP" />
-            <ParameterSlider v-model="X" parameter-name="X" :min="1" :max="10" :step="1" latex-expression="X" title="permanent land" />
+            <ParameterSlider v-model="X_1" parameter-name="X_1" :min="1" :max="10" :step="1" latex-expression="X" title="permanent land" />
           </n-collapse-item>
 
           <n-collapse-item name="simulation" title="Simulation Settings">
@@ -637,6 +708,24 @@ connect("all")
               <FontAwesomeIcon icon="gamepad" />
             </template>
             <ParameterSlider v-model="T" parameter-name="T" :min="50" :max="500" :step="50" latex-expression="T" title="number of time periods" />
+          </n-collapse-item>
+          <n-collapse-item name="shock" title="Shock">
+            <template #header-extra>
+              <FontAwesomeIcon icon="bolt" />
+            </template>
+            
+            <div style="margin-bottom: 20px;">
+              <div style="margin-bottom: 8px; font-size: 14px; font-weight: 500;">Variable to shock:</div>
+              <n-select 
+                v-model:value="variable_to_shock" 
+                :options="shockVariableOptions"
+                :render-label="renderShockLabel"
+                placeholder="Select variable to shock"
+              />
+            </div>
+            
+            <div style="margin-bottom: 8px; font-size: 14px; font-weight: 500;">Period when shock hits:</div>
+            <ParameterSlider v-model="S" parameter-name="S" :min="50" :max="500" :step="50" latex-expression="S" title="period when shock hits" />
           </n-collapse-item>
 
         </n-collapse>
@@ -967,6 +1056,9 @@ connect("all")
             </n-grid-item>
             <n-grid-item v-if="isVariableVisible('L')">
               <VariablePlot variable="L" label="Labor" latex-expression="L" :data-table="data_table" />
+            </n-grid-item>
+            <n-grid-item v-if="isVariableVisible('X')">
+              <VariablePlot variable="X" label="Land" latex-expression="X" :data-table="data_table" />
             </n-grid-item>
             <n-grid-item v-if="isVariableVisible('C')">
               <VariablePlot variable="C" label="Consumption" latex-expression="C" :data-table="data_table" />
