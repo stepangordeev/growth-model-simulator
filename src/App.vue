@@ -75,6 +75,56 @@ const X_1 = ref(1);
 const T = ref(200);
 const S = ref(100); // period when shock hits
 
+// Centralized parameter configuration
+const parameterConfig = {
+  alpha: { min: 0, max: 1, step: 0.1, latexExpression: '\\alpha', title: 'capital share' },
+  beta: { min: 0, max: 1, step: 0.1, latexExpression: '\\beta', title: 'land share' },
+  gamma: { min: 0, max: 1, step: 0.1, latexExpression: '\\gamma', title: 'TFP returns to scale' },
+  delta: { min: 0, max: 1, step: 0.1, latexExpression: '\\delta', title: 'depreciation rate' },
+  s: { min: 0, max: 1, step: 0.1, latexExpression: 's', title: 'savings rate' },
+  n: { min: -0.05, max: 0.05, step: 0.01, latexExpression: 'n', title: 'base population growth rate' },
+  nu: { min: -0.05, max: 0.05, step: 0.01, latexExpression: '\\nu', title: 'population growth rate change with income' },
+  z: { min: 0, max: 1, step: 0.1, latexExpression: 'z', title: 'research productivity' },
+  phi: { min: 0, max: 1, step: 0.1, latexExpression: '\\phi', title: 'research returns to scale' },
+  theta: { min: 0, max: 1, step: 0.1, latexExpression: '\\theta', title: 'research automation' },
+  rho: { min: 0, max: 1, step: 0.1, latexExpression: '\\rho', title: 'researcher share of population' },
+  A_1: { min: 1, max: 10, step: 1, latexExpression: 'A_1', title: 'initial TFP' },
+  K_1: { min: 1, max: 10, step: 1, latexExpression: 'K_1', title: 'initial capital' },
+  L_1: { min: 1, max: 10, step: 1, latexExpression: 'L_1', title: 'initial population' },
+  X_1: { min: 1, max: 10, step: 1, latexExpression: 'X', title: 'permanent land' },
+  T: { min: 50, max: 500, step: 50, latexExpression: 'T', title: 'number of time periods' },
+  S: { min: 50, max: 500, step: 50, latexExpression: 'S', title: 'period when shock hits' },
+  // Endogenous variables for shocking
+  A: { min: 1, max: 10, step: 1, latexExpression: 'A', title: 'TFP' },
+  K: { min: 1, max: 10, step: 1, latexExpression: 'K', title: 'capital' },
+  L: { min: 1, max: 10, step: 1, latexExpression: 'L', title: 'labor' },
+  X: { min: 1, max: 10, step: 1, latexExpression: 'X', title: 'land' }
+};
+
+// Shock value refs for each parameter
+const shockValues = {
+  alpha: ref(0.5),
+  beta: ref(0.5),
+  gamma: ref(0.5),
+  delta: ref(0.5),
+  s: ref(0.5),
+  n: ref(0.01),
+  nu: ref(0.01),
+  z: ref(0.5),
+  phi: ref(0.5),
+  theta: ref(0.5),
+  rho: ref(0.5),
+  A_1: ref(5),
+  K_1: ref(5),
+  L_1: ref(5),
+  X_1: ref(5),
+  // Endogenous variables shock values
+  A: ref(2),
+  K: ref(10),
+  L: ref(5),
+  X: ref(2)
+};
+
 
 // creates marks for naive ui's slider: marks at step intervals, with labels only at min and max, plus current value
 function createLabeledMarks(min, max, step, currentValue = null) {
@@ -337,6 +387,21 @@ const models = [
 ]
 
 const variable_to_shock = ref("none");
+
+// Computed property for current shock value
+const currentShockValue = computed({
+  get() {
+    if (variable_to_shock.value === "none" || !shockValues[variable_to_shock.value]) {
+      return 0;
+    }
+    return shockValues[variable_to_shock.value].value;
+  },
+  set(newValue) {
+    if (variable_to_shock.value !== "none" && shockValues[variable_to_shock.value]) {
+      shockValues[variable_to_shock.value].value = newValue;
+    }
+  }
+});
 
 // Parameter presets for each model
 const modelPresets = {
@@ -662,52 +727,52 @@ connect("all")
             <template #header-extra>
               <FontAwesomeIcon icon="hammer" />
             </template>
-            <ParameterSlider v-model="alpha" parameter-name="alpha" :min="0" :max="1" :step="0.1" latex-expression="\alpha" title="capital share" />
-            <ParameterSlider v-model="beta" parameter-name="beta" :min="0" :max="1" :step="0.1" latex-expression="\beta" title="land share" />
-            <ParameterSlider v-model="gamma" parameter-name="gamma" :min="0" :max="1" :step="0.1" latex-expression="\gamma" title="TFP returns to scale" />
+            <ParameterSlider v-model="alpha" parameter-name="alpha" v-bind="parameterConfig.alpha" />
+            <ParameterSlider v-model="beta" parameter-name="beta" v-bind="parameterConfig.beta" />
+            <ParameterSlider v-model="gamma" parameter-name="gamma" v-bind="parameterConfig.gamma" />
           </n-collapse-item>
           
           <n-collapse-item name="capital" title="Capital Dynamics">
             <template #header-extra>
               <FontAwesomeIcon icon="industry" />
             </template>
-            <ParameterSlider v-model="delta" parameter-name="delta" :min="0" :max="1" :step="0.1" latex-expression="\delta" title="depreciation rate" />
-            <ParameterSlider v-model="s" parameter-name="s" :min="0" :max="1" :step="0.1" latex-expression="s" title="savings rate" />
+            <ParameterSlider v-model="delta" parameter-name="delta" v-bind="parameterConfig.delta" />
+            <ParameterSlider v-model="s" parameter-name="s" v-bind="parameterConfig.s" />
           </n-collapse-item>
           
           <n-collapse-item name="population" title="Population Dynamics">
             <template #header-extra>
               <FontAwesomeIcon icon="baby-carriage" />
             </template>
-            <ParameterSlider v-model="n" parameter-name="n" :min="-0.05" :max="0.05" :step="0.01" latex-expression="n" title="base population growth rate" />
-            <ParameterSlider v-model="nu" parameter-name="nu" :min="-0.05" :max="0.05" :step="0.01" latex-expression="\nu" title="population growth rate change with income" />
+            <ParameterSlider v-model="n" parameter-name="n" v-bind="parameterConfig.n" />
+            <ParameterSlider v-model="nu" parameter-name="nu" v-bind="parameterConfig.nu" />
           </n-collapse-item>
           
           <n-collapse-item name="research" title="Research Dynamics">
             <template #header-extra>
               <FontAwesomeIcon icon="flask" />
             </template>
-            <ParameterSlider v-model="z" parameter-name="z" :min="0" :max="1" :step="0.1" latex-expression="z" title="research productivity" />
-            <ParameterSlider v-model="phi" parameter-name="phi" :min="0" :max="1" :step="0.1" latex-expression="\phi" title="research returns to scale" />
-            <ParameterSlider v-model="theta" parameter-name="theta" :min="0" :max="1" :step="0.1" latex-expression="\theta" title="research automation" />
-            <ParameterSlider v-model="rho" parameter-name="rho" :min="0" :max="1" :step="0.1" latex-expression="\rho" title="researcher share of population" />
+            <ParameterSlider v-model="z" parameter-name="z" v-bind="parameterConfig.z" />
+            <ParameterSlider v-model="phi" parameter-name="phi" v-bind="parameterConfig.phi" />
+            <ParameterSlider v-model="theta" parameter-name="theta" v-bind="parameterConfig.theta" />
+            <ParameterSlider v-model="rho" parameter-name="rho" v-bind="parameterConfig.rho" />
           </n-collapse-item>
           
           <n-collapse-item name="initial" title="Initial Values">
             <template #header-extra>
               <FontAwesomeIcon icon="rocket" />
             </template>
-            <ParameterSlider v-model="A_1" parameter-name="A_1" :min="1" :max="10" :step="1" latex-expression="A_1" title="initial TFP" />
-            <ParameterSlider v-model="K_1" parameter-name="K_1" :min="1" :max="10" :step="1" latex-expression="K_1" title="initial capital" />
-            <ParameterSlider v-model="L_1" parameter-name="L_1" :min="1" :max="10" :step="1" latex-expression="L_1" title="initial population" />
-            <ParameterSlider v-model="X_1" parameter-name="X_1" :min="1" :max="10" :step="1" latex-expression="X" title="permanent land" />
+            <ParameterSlider v-model="A_1" parameter-name="A_1" v-bind="parameterConfig.A_1" />
+            <ParameterSlider v-model="K_1" parameter-name="K_1" v-bind="parameterConfig.K_1" />
+            <ParameterSlider v-model="L_1" parameter-name="L_1" v-bind="parameterConfig.L_1" />
+            <ParameterSlider v-model="X_1" parameter-name="X_1" v-bind="parameterConfig.X_1" />
           </n-collapse-item>
 
           <n-collapse-item name="simulation" title="Simulation Settings">
             <template #header-extra>
               <FontAwesomeIcon icon="gamepad" />
             </template>
-            <ParameterSlider v-model="T" parameter-name="T" :min="50" :max="500" :step="50" latex-expression="T" title="number of time periods" />
+            <ParameterSlider v-model="T" parameter-name="T" v-bind="parameterConfig.T" />
           </n-collapse-item>
           <n-collapse-item name="shock" title="Shock">
             <template #header-extra>
@@ -724,8 +789,17 @@ connect("all")
               />
             </div>
             
+            <div v-if="variable_to_shock !== 'none' && parameterConfig[variable_to_shock]" style="margin-bottom: 20px;">
+              <div style="margin-bottom: 8px; font-size: 14px; font-weight: 500;">New value after shock:</div>
+              <ParameterSlider 
+                v-model="currentShockValue" 
+                :parameter-name="`${variable_to_shock}_shock`"
+                v-bind="parameterConfig[variable_to_shock]" 
+              />
+            </div>
+            
             <div style="margin-bottom: 8px; font-size: 14px; font-weight: 500;">Period when shock hits:</div>
-            <ParameterSlider v-model="S" parameter-name="S" :min="50" :max="500" :step="50" latex-expression="S" title="period when shock hits" />
+            <ParameterSlider v-model="S" parameter-name="S" v-bind="parameterConfig.S" />
           </n-collapse-item>
 
         </n-collapse>
