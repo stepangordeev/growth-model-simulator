@@ -119,10 +119,10 @@ const shockValues = {
   L_1: ref(5),
   X_1: ref(5),
   // Endogenous variables shock values
-  A: ref(2),
-  K: ref(10),
-  L: ref(5),
-  X: ref(2)
+  A: ref(1),
+  K: ref(1),
+  L: ref(1),
+  X: ref(1)
 };
 
 
@@ -243,7 +243,9 @@ const simulate = (
   rho,
   X_1,
   T,
-  S
+  S,
+  variable_to_shock,
+  shock_value
 ) => {
   // Initialize arrays for all variables
   const period = Array.from({ length: T }, (_, i) => i + 1);
@@ -268,14 +270,27 @@ const simulate = (
   const g_C = new Array(T);
   const g_c = new Array(T);
 
+  // Create local copies of parameters that can be modified during simulation
+  let current_alpha = alpha;
+  let current_beta = beta;
+  let current_gamma = gamma;
+  let current_delta = delta;
+  let current_phi = phi;
+  let current_theta = theta;
+  let current_n = n;
+  let current_nu = nu;
+  let current_z = z;
+  let current_s = s;
+  let current_rho = rho;
+
   // Initialize first period
   L_arr[0] = L_1;
   K_arr[0] = K_1;
   A_arr[0] = A_1;
   X_arr[0] = X_1;
-  Y_arr[0] = Y(A_arr[0], K_arr[0], X_arr[0], L_arr[0] * (1 - rho), gamma, alpha, beta);
-  I_y_arr[0] = I_y(Y_arr[0], s);
-  I_a_arr[0] = I_a(A_arr[0], K_arr[0], L_arr[0] * rho, z, phi, theta);
+  Y_arr[0] = Y(A_arr[0], K_arr[0], X_arr[0], L_arr[0] * (1 - current_rho), current_gamma, current_alpha, current_beta);
+  I_y_arr[0] = I_y(Y_arr[0], current_s);
+  I_a_arr[0] = I_a(A_arr[0], K_arr[0], L_arr[0] * current_rho, current_z, current_phi, current_theta);
   C_arr[0] = Y_arr[0] - I_y_arr[0];
   y_arr[0] = Y_arr[0] / L_arr[0];
   k_arr[0] = K_arr[0] / L_arr[0];
@@ -284,13 +299,54 @@ const simulate = (
 
   // Simulate forward
   for (let t = 0; t < T - 1; t++) {
+    // Apply parameter shock at period S
+    if ((t + 1) === S-1 && variable_to_shock !== "none") {
+      if (variable_to_shock === "alpha") {
+        current_alpha = shock_value;
+      } else if (variable_to_shock === "beta") {
+        current_beta = shock_value;
+      } else if (variable_to_shock === "gamma") {
+        current_gamma = shock_value;
+      } else if (variable_to_shock === "delta") {
+        current_delta = shock_value;
+      } else if (variable_to_shock === "phi") {
+        current_phi = shock_value;
+      } else if (variable_to_shock === "theta") {
+        current_theta = shock_value;
+      } else if (variable_to_shock === "n") {
+        current_n = shock_value;
+      } else if (variable_to_shock === "nu") {
+        current_nu = shock_value;
+      } else if (variable_to_shock === "z") {
+        current_z = shock_value;
+      } else if (variable_to_shock === "s") {
+        current_s = shock_value;
+      } else if (variable_to_shock === "rho") {
+        current_rho = shock_value;
+      }
+    }
+
     A_arr[t + 1] = A_lom(A_arr[t], I_a_arr[t]);
-    L_arr[t + 1] = L_lom(L_arr[t], n, nu, y_arr[t]);
+    L_arr[t + 1] = L_lom(L_arr[t], current_n, current_nu, y_arr[t]);
     X_arr[t + 1] = X_arr[t]; // Land is constant, unless shocked
-    K_arr[t + 1] = K_lom(K_arr[t], I_y_arr[t], delta);
-    Y_arr[t + 1] = Y(A_arr[t + 1], K_arr[t + 1], X_arr[t + 1], L_arr[t + 1] * (1 - rho), gamma, alpha, beta);
-    I_y_arr[t + 1] = I_y(Y_arr[t + 1], s);
-    I_a_arr[t + 1] = I_a(A_arr[t + 1], K_arr[t + 1], L_arr[t + 1] * rho, z, phi, theta);
+    K_arr[t + 1] = K_lom(K_arr[t], I_y_arr[t], current_delta);
+    
+    // Apply shock at period S
+    if ((t + 1) === S-1 && variable_to_shock !== "none") {
+      if (variable_to_shock === "A") {
+        A_arr[t + 1] = shock_value;
+      } else if (variable_to_shock === "K") {
+        K_arr[t + 1] = shock_value;
+      } else if (variable_to_shock === "L") {
+        L_arr[t + 1] = shock_value;
+      } else if (variable_to_shock === "X") {
+        X_arr[t + 1] = shock_value;
+      }
+    }
+    
+    Y_arr[t + 1] = Y(A_arr[t + 1], K_arr[t + 1], X_arr[t + 1], L_arr[t + 1] * (1 - current_rho), current_gamma, current_alpha, current_beta);
+    I_y_arr[t + 1] = I_y(Y_arr[t + 1], current_s);
+    I_a_arr[t + 1] = I_a(A_arr[t + 1], K_arr[t + 1], L_arr[t + 1] * current_rho, current_z, current_phi, current_theta);
     C_arr[t + 1] = Y_arr[t + 1] - I_y_arr[t + 1];
     c_arr[t + 1] = C_arr[t + 1] / L_arr[t + 1];
     y_arr[t + 1] = Y_arr[t + 1] / L_arr[t + 1];
@@ -351,7 +407,10 @@ const data_table = computed(() => simulate(
   s.value, // s
   rho.value, // rho
   X_1.value, // X
-  T.value // T
+  T.value, // T
+  S.value, // S (shock period)
+  variable_to_shock.value, // variable_to_shock
+  currentShockValue.value // shock_value
 ));
 
 const model_chosen = ref("Solow");
@@ -820,8 +879,13 @@ connect("all")
               <n-flex vertical>
 
             <n-card>
-              This dashboard simulates several models of economic growth that are commonly found in undergraduate macroeconomics and growth courses.
+              <p>This dashboard simulates several models of economic growth that are commonly found in undergraduate macroeconomics and growth courses.
+              </p>
+              <p>
               Choose the model to simulate using the selector below. Simulation results can be explored using the tabs above. Model parameters can be adjusted using the sliders in the sidebar. When the model is switched, parameters are reset to default values for the chosen model.
+              </p>
+              <p>The <i>Shock</i> section in the sidebar allows you to introduce a one-time shock to any of the model parameters or endogenous variables at a chosen period in the simulation. If you choose to shock a parameter, the new value will persist for the remainder of the simulation. If you choose to shock an endogenous variable, it will be set to the new value at the chosen period, but will then evolve according to the model's equations in subsequent periods.
+              </p>
             </n-card>
 
             <div style="display: flex; align-items: center; justify-content: center; gap: 12px;">
