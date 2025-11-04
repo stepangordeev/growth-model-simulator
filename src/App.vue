@@ -505,13 +505,13 @@ const modelPresets = {
     alpha: 0,
     beta: 0,
     gamma: 1,
-    delta: 0.1,
+    delta: 0,
     phi: 1,
     theta: 0,
     n: 0,
     nu: 0,
     z: 0.1,
-    s: 0.3,
+    s: 0,
     rho: 0.1,
     X_1: 1
   },
@@ -522,13 +522,13 @@ const modelPresets = {
     alpha: 0,
     beta: 0,
     gamma: 0.5,
-    delta: 0.1,
+    delta: 0,
     phi: 0,
     theta: 0,
     n: 0.01,
     nu: 0,
     z: 0.1,
-    s: 0.3,
+    s: 0,
     rho: 0.1,
     X_1: 1
   },
@@ -556,13 +556,13 @@ const modelPresets = {
     alpha: 0,
     beta: 0,
     gamma: 0.5,
-    delta: 0.1,
+    delta: 0,
     phi: 0,
     theta: 0,
     n: 0.02,
     nu: -0.01,
     z: 0.1,
-    s: 0.3,
+    s: 0,
     rho: 0.1,
     X_1: 1
   },
@@ -931,11 +931,6 @@ connect("all")
               </n-h6>
                 A constant fraction <vue-latex :expression="'s'" /> of output is saved and invested:
                 <vue-latex :expression="'I_t = s Y_t'" display-mode />
-              <n-h6 prefix="bar">
-                Population Law of Motion
-              </n-h6>
-                Population grows at rate <vue-latex :expression="'b'"/>:
-                <vue-latex :expression="'L_{t+1} = (1+b)L_t'" display-mode />
             </n-card>
 
             <n-card v-if="model_chosen === 'Malthus'">
@@ -1136,8 +1131,8 @@ connect("all")
               <n-h6 prefix="bar">
                 Production Function
               </n-h6>
-                The final output good <vue-latex :expression="'Y_t'" /> is produced using a constant-returns-to-scale Cobb-Douglas production function. Production uses capital <vue-latex :expression="'K_t'" />, land <vue-latex :expression="'X_t'" />, and labor <vue-latex :expression="'L_t'" />, with total factor productivity <vue-latex :expression="'A_t'" />. Land is fixed at a constant level. Returns to ideas are <vue-latex :expression="'\\gamma'" />, capital share is <vue-latex :expression="'\\alpha'" />, land share is <vue-latex :expression="'\\beta'" />:
-                <vue-latex :expression="'Y_t = A_t^\\gamma K_t^{\\alpha} X^{\\beta} L_t^{1-\\alpha-\\beta}'" display-mode />
+                The final output good <vue-latex :expression="'Y_t'" /> is produced using a constant-returns-to-scale Cobb-Douglas production function. Production uses capital <vue-latex :expression="'K_t'" />, land <vue-latex :expression="'X'" />, and labor employed in production <vue-latex :expression="'L_{y,t}'" />, with total factor productivity <vue-latex :expression="'A_t'" />. Land is fixed at a constant level. Returns to ideas are <vue-latex :expression="'\\gamma'" />, capital share is <vue-latex :expression="'\\alpha'" />, land share is <vue-latex :expression="'\\beta'" />:
+                <vue-latex :expression="'Y_t = A_t^\\gamma K_t^{\\alpha} X^{\\beta} L_{y,t}^{1-\\alpha-\\beta}'" display-mode />
               <n-h6 prefix="bar">
                 Idea Production Function
               </n-h6>
