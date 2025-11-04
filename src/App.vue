@@ -942,7 +942,7 @@ connect("all")
 
               <p>The Malthusian model endogenizes population dynamics and proposes a mechanism that keeps the average standard of living stagnant in the long term even in the presence of technological growth.</p>
                 
-              <p>Malthus believed that better living standards lead to greater population growth (e.g. because richer societies can afford better nutrition and healthcare). Furthermore, if land is an important factor of production and the supply of land is fixed, then an increase in population density should decrease the average living standards. The combination of these two assumptions generates a self-correcting force: any increase in living standards (e.g. thanks to better technology) is gradually offset by population growth, driving the society back to subsistence level at which everyone is poor enough for the number of births to equal the number of deaths. This argument helps understand the largely constant average standard of living in the agricultural societies throughout most of human history, up to Malthus's time.</p>
+              <p>Malthus believed that better living standards lead to greater population growth (e.g. because richer societies can afford better nutrition and healthcare). Furthermore, if land is an important factor of production and the supply of land is fixed, then an increase in population density should decrease the average living standards. The combination of these two assumptions generates a self-correcting force: any increase in living standards (e.g. thanks to better technology) is gradually offset by population growth, driving the society back to subsistence level at which everyone is just poor enough for the number of births to equal the number of deaths. This argument helps understand the largely constant average standard of living in the agricultural societies throughout most of human history, up to Malthus's time.</p>
 
               <p>The reasoning behind this model was formulated in <a href="https://www.jstor.org/stable/j.ctv1bvnf95" class="reference">Malthus (1798)</a>. While Malthus's work was not mathematical, his main insights can be translated into formal mathematical language of modern models of economic growth. One such formalization is presented below: it is inspired by <a href="https://doi.org/10.1257/00028280260344731" class="reference">Hansen and Prescott (2002)</a> and <a href="https://wwnorton.com/books/9781324059578" class="reference">Jones and Vollrath (2024, ch. 9)</a>.</p>
 
@@ -956,7 +956,7 @@ connect("all")
               <n-h6 prefix="bar">
                 Population Law of Motion
               </n-h6>
-                The base population growth rate is <vue-latex :expression="'n'" />. The population growth rate increases in income per capita <vue-latex :expression="'y_t=\\frac{Y_t}{L_t}'" /> at rate <vue-latex :expression="'\\nu'" />. The Malthusian model requires <vue-latex :expression="'n'" /> to be negative and the <vue-latex :expression="'\\nu'" /> to be positive, so that population shrinks when people are poor but grows when they are rich (e.g. because of better healthcare afforded by more affluent societies). Thus, the growth rate of population is <vue-latex :expression="'n + \\nu y_t'" />, resulting in the following law of motion:
+                The base population growth rate is <vue-latex :expression="'n'" />. The population growth rate increases in income per capita <vue-latex :expression="'y_t=\\frac{Y_t}{L_t}'" /> at rate <vue-latex :expression="'\\nu'" />. The Malthusian model requires <vue-latex :expression="'n'" /> to be negative and <vue-latex :expression="'\\nu'" /> to be positive, so that population shrinks when people are poor but grows when they are rich (e.g. because of better healthcare afforded by more affluent societies). Thus, the growth rate of population is <vue-latex :expression="'n + \\nu y_t'" />, resulting in the following law of motion:
                 <vue-latex :expression="'L_{t+1} = (1+n + \\nu y_t)L_t'" display-mode />
             </n-card>
 
@@ -995,7 +995,7 @@ connect("all")
 
             <n-card v-if="model_chosen === 'Jones'">
 
-              <p>The semi-endogenous growth model drops the endogenous model's assumption that the production of new ideas is proportional to the existing stock of ideas. The problem with this assumption was that it led the endogenous growth model to predict that the long-run growth rate of TFP (and output per capita) along the balanced growth path is proportional to the number of researchers in the economy. But this contradicts empirical evidence: the growth rate has been fairly stable in developed countries in recent history even as the number of researchers and research effort has been growing steadily (<a href="https://doi.org/10.1257/aer.20180338" class="reference">Bloom et al., 2020</a>). The semi-endogenous growth model is able to match this fact: if the generation of new ideas is not proportional to the stock of existing ideas, then the long-run growth of TFP and output per capita depends on steady population growth. As a result, the growth rate of the economy along the balanced growth path is proportional to the growth rate of the number of researchers (and thus the the growth rate of population).</p>
+              <p>The semi-endogenous growth model drops the endogenous model's assumption that the production of new ideas is proportional to the existing stock of ideas. The problem with this assumption was that it led the endogenous growth model to predict that the long-run growth rate of TFP (and output per capita) along the balanced growth path is proportional to the number of researchers in the economy. But this contradicts empirical evidence: the growth rate has been fairly stable in developed countries in recent history even as the number of researchers and research effort has been growing steadily (<a href="https://doi.org/10.1257/aer.20180338" class="reference">Bloom et al., 2020</a>). The semi-endogenous growth model is able to match this fact: if the generation of new ideas is not proportional to the stock of existing ideas, then the long-run growth of TFP and output per capita depends on steady population growth. As a result, the growth rate of the economy along the balanced growth path is proportional to the growth rate of the number of researchers (and thus the growth rate of population).</p>
                 
               <p>Semi-endogenous growth theory was developed in <a href="https://doi.org/10.1086/262002" class="reference">Jones (1995)</a>. See <a href="https://doi.org/10.1146/annurev-economics-080521-012458" class="reference">Jones (2022)</a> for a recent overview. The simplified version of the model here builds on <a href="https://wwnorton.com/books/9781324063612" class="reference">Jones (2024, ch. 6)</a>.</p>
 
@@ -1034,12 +1034,15 @@ connect("all")
             <n-card v-if="model_chosen === 'Automation'">
 
               <p>
-              This model is an extension of the semi-endogenous model that allows for automation in the idea production process. The formulation below is inspired by <a href="https://www.nber.org/books-and-chapters/economics-artificial-intelligence-agenda/artificial-intelligence-and-economic-growth" class="reference">Aghion, Jones, and Jones (2019, ch. 9)</a> and <a href="https://doi.org/10.1146/annurev-economics-080521-012458" class="reference">Jones (2022)</a>.
+              This model is an extension of the semi-endogenous model that allows for automation in the idea production process. 
               </p>
               <p>In this model, ideas are produced by researches and artificial intelligence (represented with capital) rather than by researchers alone. This allows the model to escape the prediction of standard semi-endogenous theory that the long-run growth rate of TFP (and output per capita) must be proportional to the growth rate of population. Research automation in this model permits a balanced growth path even in the absence of population growth.
               </p>
               <p>
               At extreme levels of research automation, the model generates an even starker prediction. If research is sufficiently automated (capital share in idea production <vue-latex :expression="'\\theta'" /> is high enough), then the model generates a singularity: infinite TFP and GDP are reached within finite time. The simulation breaks at this point. The degree of automation needed for this to happen is determined by the returns to ideas in final good production (<vue-latex :expression="'\\gamma'" />) and in idea production (<vue-latex :expression="'\\phi'" />).
+              </p>
+              <p>
+                The formulation below is inspired by <a href="https://www.nber.org/books-and-chapters/economics-artificial-intelligence-agenda/artificial-intelligence-and-economic-growth" class="reference">Aghion, Jones, and Jones (2019, ch. 9)</a> and <a href="https://doi.org/10.1146/annurev-economics-080521-012458" class="reference">Jones (2022)</a>.
               </p>
 
               <n-h6 prefix="bar">
@@ -1050,7 +1053,7 @@ connect("all")
               <n-h6 prefix="bar">
                 Idea Production Function
               </n-h6>
-                New ideas are produced using a constant-returns-to-scale Cobb-Douglas production function. Idea production uses existing ideas <vue-latex :expression="'A_t'" />, capital <vue-latex :expression="'K_{t}'" /> and researchers <vue-latex :expression="'L_{a,t}'" />. Returns to existing ideas are <vue-latex :expression="'\\phi'" />:
+                New ideas are produced using a constant-returns-to-scale Cobb-Douglas production function. Idea production uses existing ideas <vue-latex :expression="'A_t'" />, capital <vue-latex :expression="'K_{t}'" />, and researchers <vue-latex :expression="'L_{a,t}'" />. Returns to existing ideas are <vue-latex :expression="'\\phi'" /> and capital share in idea production is <vue-latex :expression="'\\theta'" />:
                 <vue-latex :expression="'I_{a,t} = z A_t^{\\phi} K_t^{\\theta} L_{a,t}^{1-\\theta}'" display-mode />
               <n-h6 prefix="bar">
                 Ideas Law of Motion
@@ -1086,9 +1089,13 @@ connect("all")
 
             <n-card v-if="model_chosen === 'Empty'">
               
-              <p>This model extends the basic semi-endogenous growth model with a negative relationship between income and fertility. The formulation below is a simplified version of <a href="https://doi.org/10.1257/aer.20201605" class="reference">Jones (2022)</a>.</p>
+              <p>This model extends the basic semi-endogenous growth model with a negative relationship between income and fertility.</p>
 
               <p>If birth rates decline in income (as seems to be the case in the modern world, both within and across countries), the economy can get trapped in an "Empty Planet" steady state: instead of continued growth in population and output per capita (as in the standard semi-endogenous model), at some point people become so rich and have so few babies that population passes its peak and starts declining. Because population growth is essential for continued technological progress in the semi-endogenous model, this leads to stagnating output per capita for this vanishing population.</p>
+              
+              <p>
+                The formulation below is a simplified version of <a href="https://doi.org/10.1257/aer.20201605" class="reference">Jones (2022)</a>.
+              </p>
 
               <n-h6 prefix="bar">
                 Production Function
@@ -1129,12 +1136,12 @@ connect("all")
               <n-h6 prefix="bar">
                 Production Function
               </n-h6>
-                The final output good <vue-latex :expression="'Y_t'" /> is produced using a constant-returns-to-scale Cobb-Douglas production function. Production uses capital <vue-latex :expression="'K_t'" />, land <vue-latex :expression="'X_t'" />, and labor <vue-latex :expression="'L_t'" />, with total factor productivity <vue-latex :expression="'A_t'" />. Land is fixed at a constant level.
+                The final output good <vue-latex :expression="'Y_t'" /> is produced using a constant-returns-to-scale Cobb-Douglas production function. Production uses capital <vue-latex :expression="'K_t'" />, land <vue-latex :expression="'X_t'" />, and labor <vue-latex :expression="'L_t'" />, with total factor productivity <vue-latex :expression="'A_t'" />. Land is fixed at a constant level. Returns to ideas are <vue-latex :expression="'\\gamma'" />, capital share is <vue-latex :expression="'\\alpha'" />, land share is <vue-latex :expression="'\\beta'" />:
                 <vue-latex :expression="'Y_t = A_t^\\gamma K_t^{\\alpha} X^{\\beta} L_t^{1-\\alpha-\\beta}'" display-mode />
               <n-h6 prefix="bar">
                 Idea Production Function
               </n-h6>
-                New ideas are produced using a constant-returns-to-scale Cobb-Douglas production function. Idea production uses existing ideas <vue-latex :expression="'A_t'" />, capital <vue-latex :expression="'K_{t}'" /> and researchers <vue-latex :expression="'L_{a,t}'" /> with research productivity <vue-latex :expression="'z'" />. Returns to existing ideas are <vue-latex :expression="'\\phi'" />:
+                New ideas are produced using a constant-returns-to-scale Cobb-Douglas production function. Idea production uses existing ideas <vue-latex :expression="'A_t'" />, capital <vue-latex :expression="'K_{t}'" /> and researchers <vue-latex :expression="'L_{a,t}'" /> with research productivity <vue-latex :expression="'z'" />. Returns to existing ideas are <vue-latex :expression="'\\phi'" />, and capital share in idea production is <vue-latex :expression="'\\theta'" />:
                 <vue-latex :expression="'I_{a,t} = z A_t^{\\phi} K_t^{\\theta} L_{a,t}^{1-\\theta}'" display-mode />
               <n-h6 prefix="bar">
                 Ideas Law of Motion
