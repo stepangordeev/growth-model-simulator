@@ -902,13 +902,13 @@ connect("all")
             
             <n-card v-if="model_chosen === 'Solow'">
 
-              <p>The Solow growth model was originally developed in <a href="https://doi.org/10.2307/1884513" class="reference">Solow (1956)</a>. The simplified version of the model presented here closely follows <a href="https://wwnorton.com/books/9781324063612" class="reference">Jones (2024, ch. 5)</a>. It focuses on capital accumulation and forms the backbone of many modern growth models.</p>
-
-              <p>
+              <p>The Solow model focuses on capital accumulation and forms the backbone of many modern growth models. 
                 The model illustrates how the accumulation of capital can be behind short- and medium-run growth as the economy converges to a steady state. Sustained long-run growth cannot be attained by capital accumulation alone due to the diminishing returns to capital: at some point, the additional output produced by adding more capital cannot cover the depreciation of existing capital, leading to stagnation.
               </p>
 
-              <p>Sustained long-run growth (balanced growth path) in this model can only be achieved through exogenous growth in total factor productivity. The Solow model, however, is silent on where this TFP growth might be coming from.</p>
+              <p>Sustained long-run growth along a balanced growth path in this model can only be achieved through exogenous growth in total factor productivity. The Solow model, however, is silent on where this TFP growth might be coming from.</p>
+
+              <p>The Solow growth model was originally developed in <a href="https://doi.org/10.2307/1884513" class="reference">Solow (1956)</a>. The simplified version of the model presented here closely follows <a href="https://wwnorton.com/books/9781324063612" class="reference">Jones (2024, ch. 5)</a>.</p>
 
               <n-h6 prefix="bar">
                 Production Function
@@ -940,9 +940,11 @@ connect("all")
 
             <n-card v-if="model_chosen === 'Malthus'">
 
-              <p>The reasoning behind this model was formulated in <a href="https://www.jstor.org/stable/j.ctv1bvnf95" class="reference">Malthus (1798)</a>. Malthus believed that better living standards lead to greater population growth (e.g. because richer societies can afford better nutrition and healthcare). If, furthermore, the supply of land is fixed, then an increase in population density should decrease the average living standards. This generates a self-correcting force: any increase in living standards (e.g. thanks to better technology) is gradually offset by population growth, driving the society back to subsistence level at which everyone is poor enough that the number of births equals the number of deaths. This argument helps understand the largely constant average standard of living in the agricultural societies throughout most of human history, up to Malthus's time.</p>
+              <p>The Malthusian model endogenizes population dynamics and proposes a mechanism that keeps the average standard of living stagnant in the long term even in the presence of technological growth.</p>
+                
+              <p>Malthus believed that better living standards lead to greater population growth (e.g. because richer societies can afford better nutrition and healthcare). Furthermore, if land is an important factor of production and the supply of land is fixed, then an increase in population density should decrease the average living standards. The combination of these two assumptions generates a self-correcting force: any increase in living standards (e.g. thanks to better technology) is gradually offset by population growth, driving the society back to subsistence level at which everyone is poor enough for the number of births to equal the number of deaths. This argument helps understand the largely constant average standard of living in the agricultural societies throughout most of human history, up to Malthus's time.</p>
 
-              <p>While Malthus's work was not mathematical, his main insights can be translated into formal mathematical language of modern models of economic growth. One such formalization is presented below: it is inspired by <a href="https://doi.org/10.1257/00028280260344731" class="reference">Hansen and Prescott (2002)</a> and <a href="https://wwnorton.com/books/9781324059578" class="reference">Jones and Vollrath (2024, ch. 9)</a>.</p>
+              <p>The reasoning behind this model was formulated in <a href="https://www.jstor.org/stable/j.ctv1bvnf95" class="reference">Malthus (1798)</a>. While Malthus's work was not mathematical, his main insights can be translated into formal mathematical language of modern models of economic growth. One such formalization is presented below: it is inspired by <a href="https://doi.org/10.1257/00028280260344731" class="reference">Hansen and Prescott (2002)</a> and <a href="https://wwnorton.com/books/9781324059578" class="reference">Jones and Vollrath (2024, ch. 9)</a>.</p>
 
 
               <n-h6 prefix="bar">
