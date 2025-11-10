@@ -626,7 +626,6 @@ const variableVisibility = {
   g_A: { hiddenInModels: ['Solow', 'Malthus'] }, // TFP growth only in research models
   g_K: { hiddenInModels: ['Malthus', 'Romer', 'Jones', 'Empty'] }, // Capital growth not used in Malthus
   g_L: { hiddenInModels: ['Solow', 'Romer'] }, // Population growth only in Malthus, Jones, General
-  g_C: { hiddenInModels: [] }, 
   g_y: { hiddenInModels: [] }, // Output per capita growth always relevant
   g_k: { hiddenInModels: ['Malthus', 'Romer', 'Jones', 'Empty'] }, // Capital per capita growth not used in Malthus
   g_c: { hiddenInModels: [] }, 
@@ -898,14 +897,16 @@ connect("all")
 
             <div style="display: flex; align-items: center; justify-content: center; gap: 12px;">
               <span style="font-weight: bold;">Selected model:</span>
-              <n-radio-group v-model:value="model_chosen" name="radiobuttongroup1" size="large">
-                <n-radio-button
-                  v-for="model in models"
-                  :key="model.value"
-                  :value="model.value"
-                  :label="model.label"
-                />
-              </n-radio-group>
+              <div style="overflow-x: auto; overflow-y: hidden; max-width: 100%;">
+                <n-radio-group v-model:value="model_chosen" name="radiobuttongroup1" size="large">
+                  <n-radio-button
+                    v-for="model in models"
+                    :key="model.value"
+                    :value="model.value"
+                    :label="model.label"
+                  />
+                </n-radio-group>
+              </div>
             </div>
             
             <n-card v-if="model_chosen === 'Solow'">
@@ -1274,7 +1275,7 @@ connect("all")
             </n-grid-item>
           </n-grid>
           </n-card>
-        </n-tab-pane>
+               </n-tab-pane>
         
 
         <n-tab-pane name="table">
