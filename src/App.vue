@@ -776,7 +776,15 @@ connect("all")
 
     <n-layout has-sider>
 
-      <n-layout-sider content-style="padding: 24px;" bordered>
+      <n-layout-sider
+        collapse-mode="transform"
+        :collapsed-width="0"
+        :show-collapsed-content="false"
+        :width="300"
+        show-trigger="arrow-circle"
+        content-style="padding: 24px;"
+        bordered
+      >
 
         <n-h3 style="text-align: center;">Parameters</n-h3>
 
@@ -1307,6 +1315,22 @@ connect("all")
   }
   a.reference:hover {
     border-bottom: 1px solid var(--n-text-color) !important;
+  }
+
+  /* Position sidebar trigger button in vertical center of viewport */
+  :deep(.n-layout-toggle-button) {
+    top: 50vh !important;
+    transform: translateY(-50%) !important;
+  }
+
+  /* Position trigger on the border when expanded */
+  :deep(.n-layout-sider:not(.n-layout-sider--collapsed) .n-layout-toggle-button) {
+    right: -12px !important;
+  }
+
+  /* Position trigger just to the right of border when collapsed */
+  :deep(.n-layout-sider--collapsed .n-layout-toggle-button) {
+    left: 2px !important;
   }
 
 </style>
